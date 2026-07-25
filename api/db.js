@@ -62,6 +62,39 @@ export async function getUser(email) {
     return null;
 }
 
+export async function getPlans() {
+    const SPREADSHEET_ID = process.env.GOOGLE_SHEET_ID;
+    const SHEET_NAME = 'Plans'; // Use a new sheet named "Plans"
+    
+    const sheets = await getSheets();
+    if (!sheets) return []; // Fallback empty
+    
+    try {
+        const response = await sheets.spreadsheets.values.get({
+            spreadsheetId: SPREADSHEET_ID,
+            range: `${SHEET_NAME}!A:D`,
+        });
+        
+        const rows = response.data.values;
+        if (!rows || rows.length <= 1) return []; // Only header or empty
+        
+        // Asumsi Kolom: PlanName[0], Price[1], Tokens[2], Recommended[3]
+        const plans = [];
+        for (let i = 1; i < rows.length; i++) {
+            plans.push({
+                name: rows[i][0] || 'Unknown',
+                price: rows[i][1] || '0',
+                tokens: parseInt(rows[i][2]) || 0,
+                recommended: (rows[i][3] && rows[i][3].toLowerCase() === 'yes') ? true : false
+            });
+        }
+        return plans;
+    } catch (e) {
+        console.error("Error reading plans:", e);
+    }
+    return [];
+}
+
 export async function createUser(userObj) {
     const SPREADSHEET_ID = process.env.GOOGLE_SHEET_ID;
     const SHEET_NAME = 'Users';

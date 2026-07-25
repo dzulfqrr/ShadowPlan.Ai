@@ -376,20 +376,21 @@
                             <div class="w-full lg:w-[40%] flex flex-col gap-4 glass-panel p-6 rounded-[2rem] h-full">
                                 <div class="flex-1 flex flex-col">
                                     <label class="block text-[11px] font-medium text-gray-400 mb-2 uppercase tracking-wider">Gambar Referensi Desain</label>
-                                    <label class="flex-1 flex flex-col items-center justify-center border border-white/10 border-dashed rounded-2xl cursor-pointer bg-[#09090b] hover:bg-white/5 transition-colors group">
-                                        <div class="flex flex-col items-center justify-center">
+                                    <label id="design-upload-label" class="flex-1 flex flex-col items-center justify-center border border-white/10 border-dashed rounded-2xl cursor-pointer bg-[#09090b] hover:bg-white/5 transition-colors group relative overflow-hidden p-2">
+                                        <div id="design-upload-placeholder" class="flex flex-col items-center justify-center">
                                             <div class="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
                                                 <i class="fa-regular fa-image text-gray-400 text-xl"></i>
                                             </div>
                                             <p class="mb-1 text-xs font-medium text-gray-300">Upload Gambar UI</p>
                                         </div>
-                                        <input type="file" id="design-file" class="hidden" accept="image/*" onchange="document.getElementById('design-file-name').textContent = this.files[0] ? this.files[0].name : ''; document.getElementById('design-file-name').classList.remove('hidden');" />
+                                        <img id="design-image-preview" class="absolute inset-0 w-full h-full object-contain hidden pointer-events-none" />
+                                        <input type="file" id="design-file" class="hidden" accept="image/*" onchange="const file = this.files[0]; if(file) { document.getElementById('design-file-name').textContent = file.name; document.getElementById('design-file-name').classList.remove('hidden'); document.getElementById('design-upload-placeholder').classList.add('hidden'); const img = document.getElementById('design-image-preview'); img.src = URL.createObjectURL(file); img.classList.remove('hidden'); } else { document.getElementById('design-file-name').classList.add('hidden'); document.getElementById('design-upload-placeholder').classList.remove('hidden'); document.getElementById('design-image-preview').classList.add('hidden'); }" />
                                     </label>
                                     <div id="design-file-name" class="text-xs text-blue-400 mt-2 hidden text-center w-full truncate px-2"></div>
                                 </div>
                                 
                                 <div class="flex gap-2 mt-2">
-                                    <button onclick="document.getElementById('design-file').value = ''; document.getElementById('design-file-name').classList.add('hidden'); document.getElementById('design-output').value = '';" class="bg-white/5 hover:bg-white/10 text-gray-300 font-medium py-3.5 px-4 rounded-2xl transition-all text-sm flex items-center justify-center">
+                                    <button onclick="document.getElementById('design-file').value = ''; document.getElementById('design-file-name').classList.add('hidden'); document.getElementById('design-output').value = ''; document.getElementById('design-upload-placeholder').classList.remove('hidden'); document.getElementById('design-image-preview').classList.add('hidden'); document.getElementById('design-image-preview').src = '';" class="bg-white/5 hover:bg-white/10 text-gray-300 font-medium py-3.5 px-4 rounded-2xl transition-all text-sm flex items-center justify-center">
                                         <i class="fa-solid fa-xmark"></i>
                                     </button>
                                     <button onclick="simulateAI('design-output')" class="flex-1 bg-blue-600 hover:bg-blue-500 text-white font-medium py-3.5 rounded-2xl transition-all flex items-center justify-center gap-2 text-sm shadow-[0_0_20px_rgba(59,130,246,0.3)]">
@@ -671,7 +672,16 @@
             
             try {
                 let endpoint = '';
-                let payload = { model: currentModel };
+                
+                const userEmail = localStorage.getItem('userEmail');
+                if (!userEmail) {
+                    throw new Error("Unauthorized: Harap login terlebih dahulu.");
+                }
+
+                let payload = { 
+                    model: currentModel,
+                    email: userEmail
+                };
 
                 if (targetElementId === 'prd-output') {
                     endpoint = '/api/make-prd';
@@ -741,13 +751,82 @@
             URL.revokeObjectURL(url);
         }
 
-        function openConfigModal() { document.getElementById('config-modal').classList.remove('hidden'); document.getElementById('config-modal').classList.add('flex'); }
+        function openConfigModal() { 
+            document.getElementById('config-modal').classList.remove('hidden'); 
+            document.getElementById('config-modal').classList.add('flex'); 
+            // Load saved keys
+            document.getElementById('config-gemini').value = localStorage.getItem('key_gemini') || '';
+            document.getElementById('config-openai').value = localStorage.getItem('key_openai') || '';
+            document.getElementById('config-deepseek').value = localStorage.getItem('key_deepseek') || '';
+            document.getElementById('config-anthropic').value = localStorage.getItem('key_anthropic') || '';
+        }
         function closeConfigModal() { document.getElementById('config-modal').classList.add('hidden'); document.getElementById('config-modal').classList.remove('flex'); }
+        
+        function saveConfig() {
+            localStorage.setItem('key_gemini', document.getElementById('config-gemini').value);
+            localStorage.setItem('key_openai', document.getElementById('config-openai').value);
+            localStorage.setItem('key_deepseek', document.getElementById('config-deepseek').value);
+            localStorage.setItem('key_anthropic', document.getElementById('config-anthropic').value);
+            alert("Konfigurasi API Key berhasil disimpan di browser Anda.");
+            closeConfigModal();
+        }
         
         function openProfileModal() { document.getElementById('profile-modal').classList.remove('hidden'); document.getElementById('profile-modal').classList.add('flex'); }
         function closeProfileModal() { document.getElementById('profile-modal').classList.add('hidden'); document.getElementById('profile-modal').classList.remove('flex'); }
         
-        function openUpgradeModal() { document.getElementById('upgrade-modal').classList.remove('hidden'); document.getElementById('upgrade-modal').classList.add('flex'); }
+        async function openUpgradeModal() { 
+            document.getElementById('upgrade-modal').classList.remove('hidden'); 
+            document.getElementById('upgrade-modal').classList.add('flex'); 
+            
+            const container = document.getElementById('upgrade-plans-container');
+            container.innerHTML = `
+                <div class="col-span-1 md:col-span-3 text-center text-gray-400 py-8">
+                    <i class="fa-solid fa-spinner fa-spin text-2xl mb-2"></i>
+                    <p>Memuat paket langganan...</p>
+                </div>`;
+                
+            try {
+                const response = await fetch('/api/plans');
+                const data = await response.json();
+                
+                if(data.plans && data.plans.length > 0) {
+                    container.innerHTML = '';
+                    data.plans.forEach(plan => {
+                        const isRecommended = plan.recommended;
+                        const cardClasses = isRecommended 
+                            ? 'bg-emerald-900/20 border border-emerald-500/50 rounded-2xl p-5 text-center relative shadow-[0_0_20px_rgba(16,185,129,0.1)]'
+                            : 'bg-[#09090b] border border-white/10 rounded-2xl p-5 text-center hover:border-emerald-500/50 transition-colors';
+                        
+                        const badgeHtml = isRecommended 
+                            ? '<div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-emerald-500 text-black text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider">Populer</div>'
+                            : '';
+                            
+                        const buttonClasses = isRecommended
+                            ? 'w-full bg-emerald-600 hover:bg-emerald-500 text-white font-medium py-2 rounded-xl transition-colors text-xs'
+                            : 'w-full bg-white/10 hover:bg-white/20 text-white font-medium py-2 rounded-xl transition-colors text-xs';
+                            
+                        const html = `
+                            <div class="${cardClasses}">
+                                ${badgeHtml}
+                                <h4 class="text-lg font-semibold text-white mb-1">${plan.name}</h4>
+                                <div class="text-2xl font-bold text-emerald-400 mb-4 mt-2">${plan.price}</div>
+                                <ul class="text-xs text-gray-300 space-y-2 mb-6 text-left">
+                                    <li><i class="fa-solid fa-check text-emerald-400 mr-2"></i> ${plan.tokens} Token AI</li>
+                                    <li><i class="fa-solid fa-check text-emerald-400 mr-2"></i> Role: Premium User</li>
+                                    <li><i class="fa-solid fa-check text-emerald-400 mr-2"></i> Custom API Key</li>
+                                </ul>
+                                <button onclick="alert('Redirecting to payment gateway...')" class="${buttonClasses}">Pilih Paket</button>
+                            </div>
+                        `;
+                        container.innerHTML += html;
+                    });
+                } else {
+                    container.innerHTML = '<div class="col-span-1 md:col-span-3 text-center text-gray-400 py-8"><p>Gagal memuat paket, silakan coba lagi.</p></div>';
+                }
+            } catch (error) {
+                container.innerHTML = '<div class="col-span-1 md:col-span-3 text-center text-red-400 py-8"><p>Terjadi kesalahan koneksi.</p></div>';
+            }
+        }
         function closeUpgradeModal() { document.getElementById('upgrade-modal').classList.add('hidden'); document.getElementById('upgrade-modal').classList.remove('flex'); }
 
         // Trigger chat via Enter key
@@ -800,14 +879,26 @@
             </div>
             <p class="text-xs text-gray-400 mb-6">Fitur ini hanya dapat diakses oleh Administrator dan Pengguna Premium.</p>
             
-            <div class="space-y-4 mb-6">
+            <div class="space-y-4 mb-6 max-h-[60vh] overflow-y-auto custom-scrollbar pr-2">
                 <div>
                     <label class="block text-xs text-gray-500 uppercase mb-2">Custom Gemini API Key</label>
-                    <input type="password" placeholder="AIzaSy..." class="w-full bg-[#09090b] border border-white/10 rounded-xl px-4 py-3 text-sm text-gray-200 focus:outline-none focus:border-emerald-500">
+                    <input type="password" id="config-gemini" placeholder="AIzaSy..." class="w-full bg-[#09090b] border border-white/10 rounded-xl px-4 py-3 text-sm text-gray-200 focus:outline-none focus:border-emerald-500">
                     <p class="text-[10px] text-gray-500 mt-2">Biarkan kosong untuk menggunakan API Key bawaan sistem.</p>
                 </div>
+                <div>
+                    <label class="block text-xs text-gray-500 uppercase mb-2">OpenAI API Key (ChatGPT)</label>
+                    <input type="password" id="config-openai" placeholder="sk-proj-..." class="w-full bg-[#09090b] border border-white/10 rounded-xl px-4 py-3 text-sm text-gray-200 focus:outline-none focus:border-emerald-500">
+                </div>
+                <div>
+                    <label class="block text-xs text-gray-500 uppercase mb-2">DeepSeek API Key</label>
+                    <input type="password" id="config-deepseek" placeholder="sk-..." class="w-full bg-[#09090b] border border-white/10 rounded-xl px-4 py-3 text-sm text-gray-200 focus:outline-none focus:border-emerald-500">
+                </div>
+                <div>
+                    <label class="block text-xs text-gray-500 uppercase mb-2">Anthropic API Key (Claude)</label>
+                    <input type="password" id="config-anthropic" placeholder="sk-ant-..." class="w-full bg-[#09090b] border border-white/10 rounded-xl px-4 py-3 text-sm text-gray-200 focus:outline-none focus:border-emerald-500">
+                </div>
             </div>
-            <button onclick="closeConfigModal()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-medium py-3 rounded-xl transition-colors">Simpan Konfigurasi</button>
+            <button onclick="saveConfig()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-medium py-3 rounded-xl transition-colors">Simpan Konfigurasi</button>
         </div>
     </div>
 
@@ -821,42 +912,10 @@
                 <p class="text-sm text-gray-400">Tingkatkan produktivitas Anda dengan kuota token yang lebih besar.</p>
             </div>
             
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-                <!-- Plan 1 -->
-                <div class="bg-[#09090b] border border-white/10 rounded-2xl p-5 text-center hover:border-emerald-500/50 transition-colors">
-                    <h4 class="text-lg font-semibold text-white mb-1">Starter</h4>
-                    <p class="text-[10px] text-gray-400 mb-4">Per Bulan</p>
-                    <div class="text-2xl font-bold text-emerald-400 mb-4">Rp12k</div>
-                    <ul class="text-xs text-gray-300 space-y-2 mb-6 text-left">
-                        <li><i class="fa-solid fa-check text-emerald-400 mr-2"></i> 24 Token AI</li>
-                        <li><i class="fa-solid fa-check text-emerald-400 mr-2"></i> Role: Premium User</li>
-                    </ul>
-                    <button onclick="alert('Redirecting to payment gateway...')" class="w-full bg-white/10 hover:bg-white/20 text-white font-medium py-2 rounded-xl transition-colors text-xs">Pilih Paket</button>
-                </div>
-                <!-- Plan 2 -->
-                <div class="bg-emerald-900/20 border border-emerald-500/50 rounded-2xl p-5 text-center relative shadow-[0_0_20px_rgba(16,185,129,0.1)]">
-                    <div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-emerald-500 text-black text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider">Populer</div>
-                    <h4 class="text-lg font-semibold text-white mb-1">Pro</h4>
-                    <p class="text-[10px] text-gray-400 mb-4">Per Bulan</p>
-                    <div class="text-2xl font-bold text-emerald-400 mb-4">Rp50k</div>
-                    <ul class="text-xs text-gray-300 space-y-2 mb-6 text-left">
-                        <li><i class="fa-solid fa-check text-emerald-400 mr-2"></i> 89 Token AI</li>
-                        <li><i class="fa-solid fa-check text-emerald-400 mr-2"></i> Role: Premium User</li>
-                        <li><i class="fa-solid fa-check text-emerald-400 mr-2"></i> Custom API Key</li>
-                    </ul>
-                    <button onclick="alert('Redirecting to payment gateway...')" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-medium py-2 rounded-xl transition-colors text-xs">Pilih Paket</button>
-                </div>
-                <!-- Plan 3 -->
-                <div class="bg-[#09090b] border border-white/10 rounded-2xl p-5 text-center hover:border-emerald-500/50 transition-colors">
-                    <h4 class="text-lg font-semibold text-white mb-1">Yearly</h4>
-                    <p class="text-[10px] text-gray-400 mb-4">Per Tahun (Lebih Hemat)</p>
-                    <div class="text-2xl font-bold text-emerald-400 mb-4">Rp120k</div>
-                    <ul class="text-xs text-gray-300 space-y-2 mb-6 text-left">
-                        <li><i class="fa-solid fa-check text-emerald-400 mr-2"></i> 300 Token AI</li>
-                        <li><i class="fa-solid fa-check text-emerald-400 mr-2"></i> Role: Premium User</li>
-                        <li><i class="fa-solid fa-check text-emerald-400 mr-2"></i> Custom API Key</li>
-                    </ul>
-                    <button onclick="alert('Redirecting to payment gateway...')" class="w-full bg-white/10 hover:bg-white/20 text-white font-medium py-2 rounded-xl transition-colors text-xs">Pilih Paket</button>
+            <div id="upgrade-plans-container" class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+                <div class="col-span-1 md:col-span-3 text-center text-gray-400 py-8">
+                    <i class="fa-solid fa-spinner fa-spin text-2xl mb-2"></i>
+                    <p>Memuat paket langganan...</p>
                 </div>
             </div>
         </div>
