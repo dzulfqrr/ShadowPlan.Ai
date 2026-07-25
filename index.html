@@ -168,11 +168,9 @@
                     <div class="bg-[#18181b] border border-white/5 rounded-2xl p-4 flex flex-col items-center text-center">
                         <i class="fa-solid fa-crown text-gray-400 mb-2"></i>
                         <h4 class="text-white text-sm font-semibold mb-1">Upgrade to premium</h4>
-                        <p class="text-[10px] text-gray-500 mb-3 leading-relaxed">Boost productivity with seamless automation and responsive AI.</p>
-                        <button class="w-full bg-white/10 hover:bg-white/20 text-white font-medium py-2 rounded-xl transition-colors text-xs mb-2">
-                            Upgrade
-                        </button>
-                        <button id="logout-btn" class="w-full bg-transparent hover:bg-white/5 text-gray-400 font-medium py-2 rounded-xl transition-colors text-xs">
+                        <p class="text-[10px] text-gray-400 text-center mb-3">Boost productivity with seamless automation and responsive AI.</p>
+                        <button onclick="openUpgradeModal()" class="w-full bg-white/10 hover:bg-white/20 text-white text-xs font-medium py-2 rounded-lg transition-colors">Upgrade</button>
+                        <button id="logout-btn" class="w-full bg-transparent hover:bg-white/5 text-gray-400 font-medium py-2 mt-2 rounded-xl transition-colors text-xs">
                             Log out
                         </button>
                     </div>
@@ -211,11 +209,11 @@
                         </div>
                     </div>
                     <div class="flex gap-3">
-                        <button class="bg-[#18181b] hover:bg-[#27272a] px-4 py-2 rounded-xl border border-white/5 text-sm text-gray-200 transition-colors flex items-center gap-2">
-                            Configuration <i class="fa-solid fa-gear text-gray-400"></i>
+                        <button onclick="openConfigModal()" class="bg-[#18181b] hover:bg-[#27272a] px-4 py-2 rounded-xl border border-white/5 text-sm text-gray-200 transition-colors flex items-center gap-2">
+                            Configuration <i class="fa-solid fa-lock text-gray-400"></i>
                         </button>
-                        <button class="bg-[#18181b] hover:bg-[#27272a] px-4 py-2 rounded-xl border border-white/5 text-sm text-gray-200 transition-colors flex items-center gap-2">
-                            Export <i class="fa-solid fa-arrow-up-right-from-square text-gray-400"></i>
+                        <button onclick="openProfileModal()" class="bg-[#18181b] hover:bg-[#27272a] px-4 py-2 rounded-xl border border-white/5 text-sm text-gray-200 transition-colors flex items-center gap-2">
+                            Profile <i class="fa-solid fa-user text-gray-400"></i>
                         </button>
                     </div>
                 </div>
@@ -249,26 +247,32 @@
 
                         <!-- Chat Input Box -->
                         <div class="w-full bg-[#18181b]/80 backdrop-blur-md border border-white/10 rounded-3xl p-2 mb-8 flex flex-col shadow-2xl">
-                            <div class="flex items-start gap-3 px-4 py-4 cursor-text" onclick="document.querySelector('[data-target=\'prd-view\']').click()">
+                            <div class="flex items-start gap-3 px-4 py-4 cursor-text">
                                 <i class="fa-solid fa-wand-magic-sparkles text-emerald-400 mt-1"></i>
-                                <textarea placeholder="Ask Anything or select a workspace below..." class="bg-transparent border-none outline-none text-gray-200 text-base w-full placeholder-gray-500 resize-none h-14 custom-scrollbar pointer-events-none" readonly></textarea>
+                                <textarea id="chat-input" placeholder="Ask Anything or select a workspace below..." class="bg-transparent border-none outline-none text-gray-200 text-base w-full placeholder-gray-500 resize-none h-14 custom-scrollbar"></textarea>
                             </div>
                             
                             <div class="flex justify-between items-center px-4 py-2 border-t border-white/5 pt-3 mt-1">
                                 <div class="flex gap-4">
-                                    <button class="text-gray-400 hover:text-gray-200 flex items-center gap-1.5 text-xs font-medium transition-colors"><i class="fa-solid fa-paperclip"></i> Attach</button>
-                                    <button class="text-gray-400 hover:text-gray-200 flex items-center gap-1.5 text-xs font-medium transition-colors"><i class="fa-solid fa-sliders"></i> Settings</button>
-                                    <button class="text-gray-400 hover:text-gray-200 flex items-center gap-1.5 text-xs font-medium transition-colors"><i class="fa-solid fa-border-all"></i> Options</button>
+                                    <button onclick="alert('Fitur Attach akan segera hadir!')" class="text-gray-400 hover:text-gray-200 flex items-center gap-1.5 text-xs font-medium transition-colors"><i class="fa-solid fa-paperclip"></i> Attach</button>
+                                    <button onclick="alert('Fitur Settings akan segera hadir!')" class="text-gray-400 hover:text-gray-200 flex items-center gap-1.5 text-xs font-medium transition-colors"><i class="fa-solid fa-sliders"></i> Settings</button>
+                                    <button onclick="alert('Fitur Options akan segera hadir!')" class="text-gray-400 hover:text-gray-200 flex items-center gap-1.5 text-xs font-medium transition-colors"><i class="fa-solid fa-border-all"></i> Options</button>
                                 </div>
                                 <div class="flex gap-2">
-                                    <button class="w-9 h-9 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center text-gray-400 transition-colors">
-                                        <i class="fa-solid fa-microphone"></i>
-                                    </button>
-                                    <button class="w-9 h-9 rounded-full bg-emerald-600 hover:bg-emerald-500 flex items-center justify-center text-white transition-colors shadow-[0_0_15px_rgba(16,185,129,0.5)]">
+                                    <button onclick="simulateAI('chat-output')" class="w-9 h-9 rounded-full bg-emerald-600 hover:bg-emerald-500 flex items-center justify-center text-white transition-colors shadow-[0_0_15px_rgba(16,185,129,0.5)]">
                                         <i class="fa-solid fa-arrow-up"></i>
                                     </button>
                                 </div>
                             </div>
+                        </div>
+
+                        <!-- Chat Output Container (Hidden by default) -->
+                        <div id="chat-output-container" class="hidden w-full bg-[#18181b]/80 backdrop-blur-md border border-emerald-500/30 rounded-3xl p-6 mb-8 flex-col shadow-2xl">
+                            <div class="flex items-center gap-2 mb-3 border-b border-white/10 pb-3">
+                                <i class="fa-solid fa-robot text-emerald-400"></i>
+                                <span class="text-sm font-medium text-gray-200">ShadowPlan AI</span>
+                            </div>
+                            <div id="chat-output" class="text-gray-300 text-sm leading-relaxed whitespace-pre-wrap"></div>
                         </div>
 
                         <!-- 3 Feature Cards (Zyricon style bottoms) -->
@@ -332,20 +336,26 @@
                                             <i class="fa-solid fa-cloud-arrow-up text-gray-500 text-lg mb-2"></i>
                                             <p class="text-[11px] text-gray-400"><span class="font-medium text-gray-300">Upload File</span> (IMG/PDF)</p>
                                         </div>
-                                        <input type="file" id="prd-file" class="hidden" />
+                                        <input type="file" id="prd-file" class="hidden" onchange="document.getElementById('prd-file-name').textContent = this.files[0] ? this.files[0].name : ''; document.getElementById('prd-file-name').classList.remove('hidden');" />
                                     </label>
+                                    <div id="prd-file-name" class="text-xs text-emerald-400 mt-2 hidden text-center w-full truncate px-2"></div>
                                 </div>
                                 
-                                <button onclick="simulateAI('prd-output')" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-medium py-3.5 rounded-2xl transition-all flex items-center justify-center gap-2 text-sm shadow-[0_0_20px_rgba(16,185,129,0.3)] mt-2">
-                                    <i class="fa-solid fa-wand-magic-sparkles"></i> Generate PRD.md
-                                </button>
+                                <div class="flex gap-2 mt-2">
+                                    <button onclick="document.getElementById('prd-notes').value = ''; document.getElementById('prd-file').value = ''; document.getElementById('prd-file-name').classList.add('hidden'); document.getElementById('prd-output').value = '';" class="bg-white/5 hover:bg-white/10 text-gray-300 font-medium py-3.5 px-4 rounded-2xl transition-all text-sm flex items-center justify-center">
+                                        <i class="fa-solid fa-xmark"></i>
+                                    </button>
+                                    <button onclick="simulateAI('prd-output')" class="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white font-medium py-3.5 rounded-2xl transition-all flex items-center justify-center gap-2 text-sm shadow-[0_0_20px_rgba(16,185,129,0.3)]">
+                                        <i class="fa-solid fa-wand-magic-sparkles"></i> Generate PRD.md
+                                    </button>
+                                </div>
                             </div>
 
                             <!-- Output Box -->
                             <div class="w-full lg:w-[60%] flex flex-col glass-panel p-6 rounded-[2rem] h-full">
                                 <div class="flex justify-between items-center mb-4">
                                     <label class="block text-[11px] font-medium text-gray-400 uppercase tracking-wider">Hasil PRD.md</label>
-                                    <button class="text-[11px] bg-white/10 hover:bg-white/20 px-3 py-1.5 rounded-lg text-white transition-colors flex items-center gap-1.5">
+                                    <button onclick="downloadText('prd-output', 'PRD_Document.md')" class="text-[11px] bg-white/10 hover:bg-white/20 px-3 py-1.5 rounded-lg text-white transition-colors flex items-center gap-1.5">
                                         <i class="fa-solid fa-download"></i> Download
                                     </button>
                                 </div>
@@ -373,20 +383,26 @@
                                             </div>
                                             <p class="mb-1 text-xs font-medium text-gray-300">Upload Gambar UI</p>
                                         </div>
-                                        <input type="file" id="design-file" class="hidden" accept="image/*" />
+                                        <input type="file" id="design-file" class="hidden" accept="image/*" onchange="document.getElementById('design-file-name').textContent = this.files[0] ? this.files[0].name : ''; document.getElementById('design-file-name').classList.remove('hidden');" />
                                     </label>
+                                    <div id="design-file-name" class="text-xs text-blue-400 mt-2 hidden text-center w-full truncate px-2"></div>
                                 </div>
                                 
-                                <button onclick="simulateAI('design-output')" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-medium py-3.5 rounded-2xl transition-all flex items-center justify-center gap-2 text-sm shadow-[0_0_20px_rgba(59,130,246,0.3)] mt-2">
-                                    <i class="fa-solid fa-palette"></i> Analyze & Generate
-                                </button>
+                                <div class="flex gap-2 mt-2">
+                                    <button onclick="document.getElementById('design-file').value = ''; document.getElementById('design-file-name').classList.add('hidden'); document.getElementById('design-output').value = '';" class="bg-white/5 hover:bg-white/10 text-gray-300 font-medium py-3.5 px-4 rounded-2xl transition-all text-sm flex items-center justify-center">
+                                        <i class="fa-solid fa-xmark"></i>
+                                    </button>
+                                    <button onclick="simulateAI('design-output')" class="flex-1 bg-blue-600 hover:bg-blue-500 text-white font-medium py-3.5 rounded-2xl transition-all flex items-center justify-center gap-2 text-sm shadow-[0_0_20px_rgba(59,130,246,0.3)]">
+                                        <i class="fa-solid fa-palette"></i> Analyze & Generate
+                                    </button>
+                                </div>
                             </div>
 
                             <!-- Output Section -->
                             <div class="w-full lg:w-[60%] flex flex-col glass-panel p-6 rounded-[2rem] h-full">
                                 <div class="flex justify-between items-center mb-4">
                                     <label class="block text-[11px] font-medium text-gray-400 uppercase tracking-wider">Hasil Design.md</label>
-                                    <button class="text-[11px] bg-white/10 hover:bg-white/20 px-3 py-1.5 rounded-lg text-white transition-colors flex items-center gap-1.5">
+                                    <button onclick="downloadText('design-output', 'Design_Document.md')" class="text-[11px] bg-white/10 hover:bg-white/20 px-3 py-1.5 rounded-lg text-white transition-colors flex items-center gap-1.5">
                                         <i class="fa-solid fa-download"></i> Download
                                     </button>
                                 </div>
@@ -417,16 +433,26 @@
                             
                             <!-- Action & Output Row -->
                             <div class="flex flex-col h-1/2 gap-4">
-                                <button onclick="simulateAI('prompt-output')" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-medium py-3.5 rounded-2xl transition-all flex items-center justify-center gap-2 text-sm shadow-[0_0_20px_rgba(16,185,129,0.3)]">
-                                    <i class="fa-solid fa-code"></i> Generate Prompt for Stitch
-                                </button>
+                                <div class="flex gap-2">
+                                    <button onclick="document.getElementById('prompt-prd-text').value = ''; document.getElementById('prompt-design-text').value = ''; document.getElementById('prompt-output').value = '';" class="bg-white/5 hover:bg-white/10 text-gray-300 font-medium py-3.5 px-6 rounded-2xl transition-all text-sm flex items-center justify-center">
+                                        <i class="fa-solid fa-xmark"></i> Clear
+                                    </button>
+                                    <button onclick="simulateAI('prompt-output')" class="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white font-medium py-3.5 rounded-2xl transition-all flex items-center justify-center gap-2 text-sm shadow-[0_0_20px_rgba(16,185,129,0.3)]">
+                                        <i class="fa-solid fa-code"></i> Generate Prompt for Stitch
+                                    </button>
+                                </div>
                                 
                                 <div class="w-full flex-1 flex flex-col glass-panel p-5 rounded-[2rem] border border-emerald-500/20 shadow-lg shadow-emerald-900/10">
                                     <div class="flex justify-between items-center mb-3">
                                         <label class="block text-[11px] font-medium text-emerald-400 uppercase tracking-wider">Final Prompt (Siap Copy)</label>
-                                        <button class="text-[11px] bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1.5">
-                                            <i class="fa-regular fa-copy"></i> Copy Text
-                                        </button>
+                                        <div class="flex gap-2">
+                                            <button onclick="downloadText('prompt-output', 'Stitch_Prompt.md')" class="text-[11px] bg-white/10 hover:bg-white/20 px-3 py-1.5 rounded-lg text-white transition-colors flex items-center gap-1.5">
+                                                <i class="fa-solid fa-download"></i> Download
+                                            </button>
+                                            <button onclick="navigator.clipboard.writeText(document.getElementById('prompt-output').value); alert('Copied!')" class="text-[11px] bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1.5">
+                                                <i class="fa-regular fa-copy"></i> Copy Text
+                                            </button>
+                                        </div>
                                     </div>
                                     <textarea id="prompt-output" readonly class="w-full flex-1 p-5 border border-white/5 rounded-2xl resize-none text-[13px] bg-[#09090b] text-gray-100 focus:outline-none custom-scrollbar leading-relaxed" placeholder="Hasil prompt satu paragraf untuk Google Stitch..."></textarea>
                                 </div>
@@ -483,23 +509,69 @@
         });
         
         // --- 4. Login Submission Simulation ---
-        authForm.addEventListener('submit', (e) => {
+        authForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             
-            // In a real app, you would validate with Firebase/Google Apps Script here.
-            // For prototype, we just transition seamlessly to the dashboard.
-            authView.classList.add('hidden');
-            appView.classList.remove('hidden');
-            appView.classList.add('flex');
+            const email = authForm.querySelector('input[type="email"]').value;
+            const password = authForm.querySelector('input[type="password"]').value;
+            
+            let payload = {
+                action: isLoginMode ? 'login' : 'signup',
+                email: email,
+                password: password
+            };
+
+            if (!isLoginMode) {
+                const names = nameFields.querySelectorAll('input');
+                payload.firstName = names[0].value;
+                payload.lastName = names[1].value;
+            }
+
+            submitBtn.textContent = 'Loading...';
+            submitBtn.disabled = true;
+
+            try {
+                const response = await fetch('/api/auth', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                
+                const data = await response.json();
+                if (response.ok && data.success) {
+                    localStorage.setItem('userEmail', data.user.email);
+                    localStorage.setItem('userRole', data.user.role);
+                    
+                    // Update Profile Modal with new data
+                    document.getElementById('profile-name').textContent = data.user.name;
+                    document.getElementById('profile-initials').textContent = data.user.name.substring(0, 2).toUpperCase();
+                    document.getElementById('profile-role').textContent = data.user.role;
+                    document.getElementById('profile-email').textContent = data.user.email;
+                    document.getElementById('profile-tokens').textContent = data.user.tokens + ' Tokens';
+                    
+                    authView.classList.add('hidden');
+                    appView.classList.remove('hidden');
+                    appView.classList.add('flex');
+                } else {
+                    alert('Error: ' + data.error);
+                }
+            } catch (error) {
+                alert('Connection Error. Please check your network.');
+            } finally {
+                submitBtn.textContent = isLoginMode ? 'Log In' : 'Sign Up';
+                submitBtn.disabled = false;
+            }
         });
         
         // --- 5. Logout Simulation ---
         logoutBtn.addEventListener('click', () => {
+            localStorage.removeItem('userEmail');
+            localStorage.removeItem('userRole');
+            
             appView.classList.remove('flex');
             appView.classList.add('hidden');
             authView.classList.remove('hidden');
             
-            // Reset form
             authForm.reset();
         });
         
@@ -620,10 +692,11 @@
                     } else {
                         throw new Error("Please upload a UI reference image first.");
                     }
-                } else if (targetElementId === 'prompt-output') {
-                    endpoint = '/api/make-prompt';
-                    payload.prdText = document.getElementById('prompt-prd-text').value;
-                    payload.designText = document.getElementById('prompt-design-text').value;
+                } else if (targetElementId === 'chat-output') {
+                    document.getElementById('chat-output-container').classList.remove('hidden');
+                    document.getElementById('chat-output-container').classList.add('flex');
+                    endpoint = '/api/chat';
+                    payload.message = document.getElementById('chat-input').value;
                 }
 
                 const response = await fetch(endpoint, {
@@ -638,11 +711,155 @@
                     throw new Error(data.error || 'Terjadi kesalahan pada server');
                 }
 
-                target.value = data.text;
+                if (target.tagName === 'TEXTAREA' || target.tagName === 'INPUT') {
+                    target.value = data.text;
+                } else {
+                    target.textContent = data.text;
+                }
             } catch (error) {
-                target.value = `Error: ${error.message}`;
+                if (target.tagName === 'TEXTAREA' || target.tagName === 'INPUT') {
+                    target.value = `Error: ${error.message}`;
+                } else {
+                    target.textContent = `Error: ${error.message}`;
+                }
             }
         }
+
+        // --- 8. Modals & Utilities ---
+        function downloadText(elementId, filename) {
+            const text = document.getElementById(elementId).value;
+            if (!text) {
+                alert("Tidak ada teks untuk didownload.");
+                return;
+            }
+            const blob = new Blob([text], { type: 'text/markdown' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function openConfigModal() { document.getElementById('config-modal').classList.remove('hidden'); document.getElementById('config-modal').classList.add('flex'); }
+        function closeConfigModal() { document.getElementById('config-modal').classList.add('hidden'); document.getElementById('config-modal').classList.remove('flex'); }
+        
+        function openProfileModal() { document.getElementById('profile-modal').classList.remove('hidden'); document.getElementById('profile-modal').classList.add('flex'); }
+        function closeProfileModal() { document.getElementById('profile-modal').classList.add('hidden'); document.getElementById('profile-modal').classList.remove('flex'); }
+        
+        function openUpgradeModal() { document.getElementById('upgrade-modal').classList.remove('hidden'); document.getElementById('upgrade-modal').classList.add('flex'); }
+        function closeUpgradeModal() { document.getElementById('upgrade-modal').classList.add('hidden'); document.getElementById('upgrade-modal').classList.remove('flex'); }
+
+        // Trigger chat via Enter key
+        document.getElementById('chat-input').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                simulateAI('chat-output');
+            }
+        });
     </script>
+
+    <!-- Modals Container -->
+    
+    <!-- Profile Modal -->
+    <div id="profile-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[100] hidden items-center justify-center p-4">
+        <div class="bg-[#18181b] border border-white/10 rounded-3xl p-8 max-w-sm w-full relative shadow-2xl">
+            <button onclick="closeProfileModal()" class="absolute top-4 right-4 text-gray-500 hover:text-white transition-colors"><i class="fa-solid fa-xmark"></i></button>
+            <div class="flex flex-col items-center mb-6">
+                <div id="profile-initials" class="w-20 h-20 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-3xl font-bold mb-3">
+                    MZ
+                </div>
+                <h3 id="profile-name" class="text-xl font-semibold text-white">Moch Zulfiqar</h3>
+                <span id="profile-role" class="text-xs px-2 py-1 bg-white/10 text-gray-300 rounded mt-2 uppercase tracking-wide">Administrator</span>
+            </div>
+            <div class="space-y-4 mb-6">
+                <div>
+                    <label class="block text-xs text-gray-500 uppercase mb-1">Email</label>
+                    <p id="profile-email" class="text-sm text-gray-200">admin@shadowplan.ai</p>
+                </div>
+                <div>
+                    <label class="block text-xs text-gray-500 uppercase mb-1">Token Tersisa</label>
+                    <p id="profile-tokens" class="text-sm font-semibold text-emerald-400">999999 Tokens</p>
+                </div>
+                <div>
+                    <label class="block text-xs text-gray-500 uppercase mb-1">Nomor Telepon</label>
+                    <input type="text" placeholder="+62 812..." class="w-full bg-[#09090b] border border-white/10 rounded-lg px-3 py-2 text-sm text-gray-200 focus:outline-none focus:border-emerald-500">
+                </div>
+            </div>
+            <button class="w-full bg-white/10 hover:bg-white/20 text-white font-medium py-2 rounded-xl transition-colors">Simpan Profil</button>
+        </div>
+    </div>
+
+    <!-- Config Modal -->
+    <div id="config-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[100] hidden items-center justify-center p-4">
+        <div class="bg-[#18181b] border border-white/10 rounded-3xl p-8 max-w-md w-full relative shadow-2xl">
+            <button onclick="closeConfigModal()" class="absolute top-4 right-4 text-gray-500 hover:text-white transition-colors"><i class="fa-solid fa-xmark"></i></button>
+            <div class="flex items-center gap-3 mb-2">
+                <i class="fa-solid fa-lock text-emerald-400 text-xl"></i>
+                <h3 class="text-xl font-semibold text-white">Configuration</h3>
+            </div>
+            <p class="text-xs text-gray-400 mb-6">Fitur ini hanya dapat diakses oleh Administrator dan Pengguna Premium.</p>
+            
+            <div class="space-y-4 mb-6">
+                <div>
+                    <label class="block text-xs text-gray-500 uppercase mb-2">Custom Gemini API Key</label>
+                    <input type="password" placeholder="AIzaSy..." class="w-full bg-[#09090b] border border-white/10 rounded-xl px-4 py-3 text-sm text-gray-200 focus:outline-none focus:border-emerald-500">
+                    <p class="text-[10px] text-gray-500 mt-2">Biarkan kosong untuk menggunakan API Key bawaan sistem.</p>
+                </div>
+            </div>
+            <button onclick="closeConfigModal()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-medium py-3 rounded-xl transition-colors">Simpan Konfigurasi</button>
+        </div>
+    </div>
+
+    <!-- Upgrade Modal -->
+    <div id="upgrade-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[100] hidden items-center justify-center p-4">
+        <div class="bg-[#18181b] border border-emerald-500/30 rounded-3xl p-8 max-w-2xl w-full relative shadow-2xl">
+            <button onclick="closeUpgradeModal()" class="absolute top-4 right-4 text-gray-500 hover:text-white transition-colors"><i class="fa-solid fa-xmark"></i></button>
+            <div class="text-center mb-8">
+                <i class="fa-solid fa-crown text-emerald-400 text-4xl mb-4"></i>
+                <h3 class="text-2xl font-bold text-white mb-2">Upgrade to Premium</h3>
+                <p class="text-sm text-gray-400">Tingkatkan produktivitas Anda dengan kuota token yang lebih besar.</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+                <!-- Plan 1 -->
+                <div class="bg-[#09090b] border border-white/10 rounded-2xl p-5 text-center hover:border-emerald-500/50 transition-colors">
+                    <h4 class="text-lg font-semibold text-white mb-1">Starter</h4>
+                    <p class="text-[10px] text-gray-400 mb-4">Per Bulan</p>
+                    <div class="text-2xl font-bold text-emerald-400 mb-4">Rp12k</div>
+                    <ul class="text-xs text-gray-300 space-y-2 mb-6 text-left">
+                        <li><i class="fa-solid fa-check text-emerald-400 mr-2"></i> 24 Token AI</li>
+                        <li><i class="fa-solid fa-check text-emerald-400 mr-2"></i> Role: Premium User</li>
+                    </ul>
+                    <button onclick="alert('Redirecting to payment gateway...')" class="w-full bg-white/10 hover:bg-white/20 text-white font-medium py-2 rounded-xl transition-colors text-xs">Pilih Paket</button>
+                </div>
+                <!-- Plan 2 -->
+                <div class="bg-emerald-900/20 border border-emerald-500/50 rounded-2xl p-5 text-center relative shadow-[0_0_20px_rgba(16,185,129,0.1)]">
+                    <div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-emerald-500 text-black text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider">Populer</div>
+                    <h4 class="text-lg font-semibold text-white mb-1">Pro</h4>
+                    <p class="text-[10px] text-gray-400 mb-4">Per Bulan</p>
+                    <div class="text-2xl font-bold text-emerald-400 mb-4">Rp50k</div>
+                    <ul class="text-xs text-gray-300 space-y-2 mb-6 text-left">
+                        <li><i class="fa-solid fa-check text-emerald-400 mr-2"></i> 89 Token AI</li>
+                        <li><i class="fa-solid fa-check text-emerald-400 mr-2"></i> Role: Premium User</li>
+                        <li><i class="fa-solid fa-check text-emerald-400 mr-2"></i> Custom API Key</li>
+                    </ul>
+                    <button onclick="alert('Redirecting to payment gateway...')" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-medium py-2 rounded-xl transition-colors text-xs">Pilih Paket</button>
+                </div>
+                <!-- Plan 3 -->
+                <div class="bg-[#09090b] border border-white/10 rounded-2xl p-5 text-center hover:border-emerald-500/50 transition-colors">
+                    <h4 class="text-lg font-semibold text-white mb-1">Yearly</h4>
+                    <p class="text-[10px] text-gray-400 mb-4">Per Tahun (Lebih Hemat)</p>
+                    <div class="text-2xl font-bold text-emerald-400 mb-4">Rp120k</div>
+                    <ul class="text-xs text-gray-300 space-y-2 mb-6 text-left">
+                        <li><i class="fa-solid fa-check text-emerald-400 mr-2"></i> 300 Token AI</li>
+                        <li><i class="fa-solid fa-check text-emerald-400 mr-2"></i> Role: Premium User</li>
+                        <li><i class="fa-solid fa-check text-emerald-400 mr-2"></i> Custom API Key</li>
+                    </ul>
+                    <button onclick="alert('Redirecting to payment gateway...')" class="w-full bg-white/10 hover:bg-white/20 text-white font-medium py-2 rounded-xl transition-colors text-xs">Pilih Paket</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

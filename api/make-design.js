@@ -1,4 +1,5 @@
 import { GoogleGenAI } from '@google/genai';
+import { deductToken } from './db.js';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -6,11 +7,18 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { fileData, mimeType, model } = req.body;
+    const { fileData, mimeType, model, email } = req.body;
+    
+    if (!email) {
+      return res.status(401).json({ error: 'Unauthorized: Harap login terlebih dahulu.' });
+    }
     
     if (!fileData || !mimeType) {
       return res.status(400).json({ error: 'Please provide a UI reference image.' });
     }
+
+    // Cek dan kurangi token
+    await deductToken(email);
 
     const ai = new GoogleGenAI({});
     

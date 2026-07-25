@@ -1,4 +1,5 @@
 import { GoogleGenAI } from '@google/genai';
+import { deductToken } from './db.js';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -6,11 +7,18 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { notes, fileData, mimeType, model } = req.body;
+    const { notes, fileData, mimeType, model, email } = req.body;
+    
+    if (!email) {
+      return res.status(401).json({ error: 'Unauthorized: Harap login terlebih dahulu.' });
+    }
     
     if (!notes && !fileData) {
       return res.status(400).json({ error: 'Please provide notes or a reference file.' });
     }
+
+    // Cek dan kurangi token pengguna
+    await deductToken(email);
 
     // Initialize Gemini SDK (it automatically picks up GEMINI_API_KEY from environment)
     const ai = new GoogleGenAI({});
