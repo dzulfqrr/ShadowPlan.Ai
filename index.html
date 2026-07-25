@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stitch AI Assistant</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: #0c0c0e; 
+            margin: 0; 
+            overflow: hidden; 
+        }
+        
+        /* Custom scrollbar for dark mode */
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #3f3f46; border-radius: 10px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background-color: #52525b; }
+        
+        /* Gradient and Glassmorphism utilities */
+        .forest-gradient { 
+            background: linear-gradient(135deg, #09261a 0%, #11422c 50%, #061710 100%); 
+        }
+        .glass-panel { 
+            background: rgba(24, 24, 27, 0.6); 
+            backdrop-filter: blur(12px); 
+            border: 1px solid rgba(255, 255, 255, 0.05); 
+        }
+    </style>
+</head>
+<body>
+
+    <div id="auth-view" class="w-screen h-screen flex items-center justify-center bg-[#09090b] p-4 sm:p-8">
+        <div class="w-full max-w-[1200px] h-full max-h-[800px] flex rounded-[2rem] overflow-hidden shadow-2xl border border-white/10 relative">
+            
+            <!-- Left Panel (Forest Gradient) -->
+            <div class="hidden md:flex w-1/2 forest-gradient p-12 flex-col justify-center relative">
+                <!-- Background decoration -->
+                <div class="absolute top-0 right-0 w-64 h-64 bg-emerald-500/10 rounded-full blur-[80px] pointer-events-none"></div>
+                
+                <h1 class="text-white text-5xl font-semibold mb-4 leading-tight relative z-10">Get Started<br>with Us</h1>
+                <p class="text-emerald-100/70 text-sm mb-16 max-w-xs relative z-10">Complete these easy steps to register your account and start your AI workspace.</p>
+                
+                <div class="flex gap-4 relative z-10">
+                    <div class="bg-white text-black p-5 rounded-2xl w-32 aspect-square flex flex-col justify-between shadow-xl">
+                        <div class="w-6 h-6 rounded-full bg-black text-white flex items-center justify-center text-xs font-bold">1</div>
+                        <p class="text-sm font-medium">Sign up your account</p>
+                    </div>
+                    <div class="bg-white/10 text-white p-5 rounded-2xl w-32 aspect-square flex flex-col justify-between backdrop-blur-md border border-white/10">
+                        <div class="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center text-xs font-bold">2</div>
+                        <p class="text-sm font-medium">Set up your workspace</p>
+                    </div>
+                    <div class="bg-white/10 text-white p-5 rounded-2xl w-32 aspect-square flex flex-col justify-between backdrop-blur-md border border-white/10">
+                        <div class="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center text-xs font-bold">3</div>
+                        <p class="text-sm font-medium">Set up your profile</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Right Panel (Form) -->
+            <div class="w-full md:w-1/2 bg-[#0c0c0e] p-8 sm:p-16 flex flex-col justify-center relative z-10">
+                <div class="max-w-md w-full mx-auto">
+                    <div class="text-center mb-8">
+                        <h2 class="text-white text-2xl font-semibold mb-2 tracking-tight" id="auth-title">Sign Up Account</h2>
+                        <p class="text-gray-400 text-sm" id="auth-subtitle">Enter your personal data to create your account.</p>
+                    </div>
+                    
+                    <div class="flex gap-4 mb-6">
+                        <button class="flex-1 flex items-center justify-center gap-2 bg-transparent border border-white/10 text-white rounded-xl py-3 hover:bg-white/5 transition-colors text-sm font-medium">
+                            <i class="fa-brands fa-google text-lg"></i> Google
+                        </button>
+                        <button class="flex-1 flex items-center justify-center gap-2 bg-transparent border border-white/10 text-white rounded-xl py-3 hover:bg-white/5 transition-colors text-sm font-medium">
+                            <i class="fa-brands fa-github text-lg"></i> Github
+                        </button>
+                    </div>
+                    
+                    <div class="flex items-center gap-4 mb-6">
+                        <div class="h-px bg-white/10 flex-1"></div>
+                        <span class="text-gray-500 text-xs font-medium uppercase tracking-wider">Or</span>
+                        <div class="h-px bg-white/10 flex-1"></div>
+                    </div>
+                    
+                    <form id="auth-form" class="space-y-4">
+                        <div id="name-fields" class="flex gap-4 transition-all duration-300">
+                            <div class="flex-1">
+                                <label class="block text-gray-400 text-xs mb-1.5 font-medium">First Name</label>
+                                <input type="text" id="fname" class="w-full bg-[#18181b] border border-white/5 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-white/20 focus:ring-1 focus:ring-white/20 transition-all" placeholder="eg. John">
+                            </div>
+                            <div class="flex-1">
+                                <label class="block text-gray-400 text-xs mb-1.5 font-medium">Last Name</label>
+                                <input type="text" id="lname" class="w-full bg-[#18181b] border border-white/5 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-white/20 focus:ring-1 focus:ring-white/20 transition-all" placeholder="eg. Francisco">
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-gray-400 text-xs mb-1.5 font-medium">Email</label>
+                            <input type="email" id="email" class="w-full bg-[#18181b] border border-white/5 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-white/20 focus:ring-1 focus:ring-white/20 transition-all" placeholder="eg. johnfrans@gmail.com" required>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-gray-400 text-xs mb-1.5 font-medium">Password</label>
+                            <div class="relative">
+                                <input type="password" id="password" class="w-full bg-[#18181b] border border-white/5 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-white/20 focus:ring-1 focus:ring-white/20 transition-all" placeholder="Enter your password" required>
+                                <i class="fa-regular fa-eye-slash absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 cursor-pointer hover:text-gray-300 transition-colors"></i>
+                            </div>
+                            <p class="text-[10px] text-gray-500 mt-2" id="password-hint">Must be at least 8 characters.</p>
+                        </div>
+                        
+                        <button type="submit" class="w-full bg-white text-black font-semibold rounded-xl py-3.5 mt-2 hover:bg-gray-200 transition-colors shadow-lg shadow-white/5">Sign Up</button>
+                    </form>
+                    
+                    <p class="text-center text-xs text-gray-400 mt-6">
+                        <span id="toggle-text">Already have an account?</span> 
+                        <button id="toggle-auth" class="text-white font-medium hover:underline focus:outline-none">Log in</button>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="app-view" class="h-screen w-screen hidden bg-[#b8a2c2] p-2 sm:p-6 items-center justify-center">
+        <!-- Main Floating Application Container -->
+        <div class="w-full max-w-[1500px] h-full max-h-[900px] bg-[#0c0c0e] rounded-[2rem] flex overflow-hidden shadow-2xl shadow-black/50 border border-white/10">
+            
+            <!-- Sidebar -->
+            <aside class="w-[260px] bg-[#09090b] flex flex-col h-full flex-shrink-0 border-r border-white/5 py-6 px-4">
+                <!-- Logo & Window Controls -->
+                <div class="flex items-center gap-3 text-white font-semibold text-lg tracking-wide mb-8 px-2 cursor-pointer" onclick="document.querySelector('[data-target=\'dashboard-home-view\']').click()">
+                    <i class="fa-solid fa-wand-magic-sparkles text-emerald-400"></i>
+                    <div class="flex flex-col">
+                        <span class="leading-tight text-base mt-1">ShadowPlan Ai</span>
+                        <span class="text-[8px] text-emerald-500/80 font-semibold tracking-widest uppercase mt-0.5">by Blackone.Ai Group</span>
+                    </div>
+                    <button class="ml-auto text-gray-500 hover:text-white"><i class="fa-regular fa-window-maximize"></i></button>
+                </div>
+
+                <!-- New Chat Button -->
+                <button class="w-full bg-[#18181b] hover:bg-[#27272a] border border-white/5 text-gray-200 font-medium py-2.5 px-4 rounded-xl flex items-center gap-3 transition-colors mb-8 text-sm" data-target="dashboard-home-view">
+                    <i class="fa-regular fa-message"></i> New Chat
+                </button>
+
+                <!-- Features Menu -->
+                <div class="mb-6 flex-1">
+                    <p class="text-[11px] font-medium text-gray-500 uppercase tracking-wider px-2 mb-3">Features</p>
+                    <nav class="space-y-1">
+                        <button class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left transition-all bg-white/10 text-white font-medium text-sm" data-target="dashboard-home-view">
+                            <i class="fa-solid fa-house w-4 text-center"></i> Dashboard
+                        </button>
+                        <button class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left transition-all text-gray-400 hover:bg-white/5 hover:text-gray-200 text-sm" data-target="prd-view">
+                            <i class="fa-regular fa-file-lines w-4 text-center"></i> PRD Generator
+                        </button>
+                        <button class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left transition-all text-gray-400 hover:bg-white/5 hover:text-gray-200 text-sm" data-target="design-view">
+                            <i class="fa-solid fa-pen-nib w-4 text-center"></i> UI/UX Analyzer
+                        </button>
+                        <button class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left transition-all text-gray-400 hover:bg-white/5 hover:text-gray-200 text-sm" data-target="prompt-view">
+                            <i class="fa-solid fa-terminal w-4 text-center"></i> Stitch Prompter
+                        </button>
+                    </nav>
+                </div>
+
+                <!-- Upgrade Card (Zyricon style) -->
+                <div class="mt-auto pt-4">
+                    <div class="bg-[#18181b] border border-white/5 rounded-2xl p-4 flex flex-col items-center text-center">
+                        <i class="fa-solid fa-crown text-gray-400 mb-2"></i>
+                        <h4 class="text-white text-sm font-semibold mb-1">Upgrade to premium</h4>
+                        <p class="text-[10px] text-gray-500 mb-3 leading-relaxed">Boost productivity with seamless automation and responsive AI.</p>
+                        <button class="w-full bg-white/10 hover:bg-white/20 text-white font-medium py-2 rounded-xl transition-colors text-xs mb-2">
+                            Upgrade
+                        </button>
+                        <button id="logout-btn" class="w-full bg-transparent hover:bg-white/5 text-gray-400 font-medium py-2 rounded-xl transition-colors text-xs">
+                            Log out
+                        </button>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Main Workspace Content -->
+            <main class="flex-1 bg-gradient-to-b from-[#15111c] to-[#0c0c0e] flex flex-col h-full relative overflow-hidden">
+                <!-- Zyricon Background Glow -->
+                <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-purple-900/15 blur-[120px] rounded-full pointer-events-none"></div>
+
+                <!-- Header (Top Bar) -->
+                <div class="flex justify-between items-center p-6 relative z-10 h-[80px] flex-shrink-0">
+                    <!-- Dropdown Model AI Selection -->
+                    <div class="flex items-center gap-2 bg-[#18181b] px-4 py-2 rounded-xl border border-white/5 cursor-pointer hover:bg-[#27272a] transition-all group relative">
+                        <i class="fa-solid fa-sparkles text-emerald-400 text-xs"></i>
+                        <span id="selected-model-text" class="text-sm font-medium text-gray-200">Gemini 3.5 Flash</span>
+                        <i class="fa-solid fa-chevron-down text-[10px] text-gray-400 ml-1"></i>
+                        
+                        <!-- Dropdown Menu (Muncul saat di-hover) -->
+                        <div class="absolute top-full left-0 mt-2 w-48 bg-[#18181b] border border-white/10 rounded-xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 overflow-hidden">
+                            <div onclick="selectModel('Gemini 3.5 Flash')" class="px-4 py-3 bg-white/5 cursor-pointer text-sm text-emerald-400 flex items-center justify-between border-b border-white/5 model-option" data-model="Gemini 3.5 Flash">
+                                <div class="flex items-center gap-2">
+                                    <i class="fa-solid fa-bolt text-emerald-400"></i>
+                                    <span>Gemini 3.5 Flash</span>
+                                </div>
+                                <i class="fa-solid fa-check text-xs check-icon"></i>
+                            </div>
+                            <div onclick="selectModel('Gemini 3.1 Pro')" class="px-4 py-3 hover:bg-white/5 cursor-pointer text-sm text-gray-300 transition-colors flex items-center justify-between model-option" data-model="Gemini 3.1 Pro">
+                                <div class="flex items-center gap-2">
+                                    <i class="fa-solid fa-brain text-gray-400"></i>
+                                    <span>Gemini 3.1 Pro</span>
+                                </div>
+                                <i class="fa-solid fa-check text-xs check-icon hidden"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex gap-3">
+                        <button class="bg-[#18181b] hover:bg-[#27272a] px-4 py-2 rounded-xl border border-white/5 text-sm text-gray-200 transition-colors flex items-center gap-2">
+                            Configuration <i class="fa-solid fa-gear text-gray-400"></i>
+                        </button>
+                        <button class="bg-[#18181b] hover:bg-[#27272a] px-4 py-2 rounded-xl border border-white/5 text-sm text-gray-200 transition-colors flex items-center gap-2">
+                            Export <i class="fa-solid fa-arrow-up-right-from-square text-gray-400"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Dynamic Content Container -->
+                <div class="flex-1 overflow-y-auto custom-scrollbar relative z-10 w-full flex flex-col items-center">
+                    
+                    <!-- 1. Dashboard Home View -->
+                    <div id="dashboard-home-view" class="view-panel flex flex-col items-center justify-center w-full max-w-4xl px-8 py-4 flex-1 min-h-0 pb-12">
+                        
+                        <!-- Glowing Orb (Zyricon style) -->
+                        <div class="w-16 h-16 rounded-full bg-gradient-to-br from-[#a855f7] to-[#3b82f6] mb-8 shadow-[0_0_50px_rgba(168,85,247,0.4)] flex items-center justify-center relative">
+                            <div class="absolute inset-0 bg-white/20 rounded-full blur-sm"></div>
+                            <div class="absolute inset-1 bg-gradient-to-tr from-black/40 to-transparent rounded-full"></div>
+                        </div>
+
+                        <h1 class="text-[32px] font-medium text-white mb-10 tracking-tight text-center">Ready to Create Something New?</h1>
+                        
+                        <!-- Mini Action Pills -->
+                        <div class="flex flex-wrap justify-center gap-3 mb-6">
+                            <button class="flex items-center gap-2 px-4 py-2 rounded-full border border-white/10 bg-white/5 hover:bg-white/10 text-gray-300 text-sm transition-colors card-nav" data-target="prd-view">
+                                <i class="fa-solid fa-file-lines text-emerald-400"></i> Create PRD
+                            </button>
+                            <button class="flex items-center gap-2 px-4 py-2 rounded-full border border-white/10 bg-white/5 hover:bg-white/10 text-gray-300 text-sm transition-colors card-nav" data-target="design-view">
+                                <i class="fa-regular fa-lightbulb text-emerald-400"></i> Analyze UI
+                            </button>
+                            <button class="flex items-center gap-2 px-4 py-2 rounded-full border border-white/10 bg-white/5 hover:bg-white/10 text-gray-300 text-sm transition-colors card-nav" data-target="prompt-view">
+                                <i class="fa-solid fa-code text-emerald-400"></i> Stitch Prompt
+                            </button>
+                        </div>
+
+                        <!-- Chat Input Box -->
+                        <div class="w-full bg-[#18181b]/80 backdrop-blur-md border border-white/10 rounded-3xl p-2 mb-8 flex flex-col shadow-2xl">
+                            <div class="flex items-start gap-3 px-4 py-4 cursor-text" onclick="document.querySelector('[data-target=\'prd-view\']').click()">
+                                <i class="fa-solid fa-wand-magic-sparkles text-emerald-400 mt-1"></i>
+                                <textarea placeholder="Ask Anything or select a workspace below..." class="bg-transparent border-none outline-none text-gray-200 text-base w-full placeholder-gray-500 resize-none h-14 custom-scrollbar pointer-events-none" readonly></textarea>
+                            </div>
+                            
+                            <div class="flex justify-between items-center px-4 py-2 border-t border-white/5 pt-3 mt-1">
+                                <div class="flex gap-4">
+                                    <button class="text-gray-400 hover:text-gray-200 flex items-center gap-1.5 text-xs font-medium transition-colors"><i class="fa-solid fa-paperclip"></i> Attach</button>
+                                    <button class="text-gray-400 hover:text-gray-200 flex items-center gap-1.5 text-xs font-medium transition-colors"><i class="fa-solid fa-sliders"></i> Settings</button>
+                                    <button class="text-gray-400 hover:text-gray-200 flex items-center gap-1.5 text-xs font-medium transition-colors"><i class="fa-solid fa-border-all"></i> Options</button>
+                                </div>
+                                <div class="flex gap-2">
+                                    <button class="w-9 h-9 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center text-gray-400 transition-colors">
+                                        <i class="fa-solid fa-microphone"></i>
+                                    </button>
+                                    <button class="w-9 h-9 rounded-full bg-emerald-600 hover:bg-emerald-500 flex items-center justify-center text-white transition-colors shadow-[0_0_15px_rgba(16,185,129,0.5)]">
+                                        <i class="fa-solid fa-arrow-up"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 3 Feature Cards (Zyricon style bottoms) -->
+                        <div class="w-full grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <!-- Card 1 -->
+                            <div class="glass-panel hover:bg-[#27272a] p-5 rounded-2xl cursor-pointer transition-all group card-nav" data-target="prd-view">
+                                <div class="flex justify-between items-start mb-4">
+                                    <div class="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center text-gray-400 group-hover:text-emerald-400 transition-colors">
+                                        <i class="fa-regular fa-file-lines text-lg"></i>
+                                    </div>
+                                    <span class="text-[9px] font-medium bg-white/5 border border-white/5 px-2 py-1 rounded-md text-gray-400">Make PRD</span>
+                                </div>
+                                <h3 class="text-gray-200 font-medium mb-2 text-sm">PRD Generator</h3>
+                                <p class="text-xs text-gray-500 leading-relaxed">Turn client notes and references into structured Product Requirements instantly.</p>
+                            </div>
+                            <!-- Card 2 -->
+                            <div class="glass-panel hover:bg-[#27272a] p-5 rounded-2xl cursor-pointer transition-all group card-nav" data-target="design-view">
+                                <div class="flex justify-between items-start mb-4">
+                                    <div class="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center text-gray-400 group-hover:text-emerald-400 transition-colors">
+                                        <i class="fa-solid fa-palette text-lg"></i>
+                                    </div>
+                                    <span class="text-[9px] font-medium bg-white/5 border border-white/5 px-2 py-1 rounded-md text-gray-400">Make Design</span>
+                                </div>
+                                <h3 class="text-gray-200 font-medium mb-2 text-sm">UI/UX Analyzer</h3>
+                                <p class="text-xs text-gray-500 leading-relaxed">Convert reference UI images into detailed component-driven design.md files.</p>
+                            </div>
+                            <!-- Card 3 -->
+                            <div class="glass-panel hover:bg-[#27272a] p-5 rounded-2xl cursor-pointer transition-all group card-nav" data-target="prompt-view">
+                                <div class="flex justify-between items-start mb-4">
+                                    <div class="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center text-gray-400 group-hover:text-emerald-400 transition-colors">
+                                        <i class="fa-solid fa-code text-lg"></i>
+                                    </div>
+                                    <span class="text-[9px] font-medium bg-white/5 border border-white/5 px-2 py-1 rounded-md text-gray-400">Stitch Prompt</span>
+                                </div>
+                                <h3 class="text-gray-200 font-medium mb-2 text-sm">Dev Assistant</h3>
+                                <p class="text-xs text-gray-500 leading-relaxed">Merge PRD & Design files to generate highly precise prompts for Google Stitch.</p>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- 2. PRD View -->
+                    <div id="prd-view" class="view-panel hidden flex-col w-full max-w-6xl px-8 py-4 flex-1 min-h-0">
+                        <div class="mb-6">
+                            <h2 class="text-2xl font-semibold text-white mb-2">PRD Generator</h2>
+                            <p class="text-gray-400 text-sm">Berikan kerangka kasar atau referensi hasil diskusi klien untuk membuat Product Requirements Document.</p>
+                        </div>
+                        
+                        <div class="flex flex-col lg:flex-row gap-6 flex-1 min-h-0 pb-8 w-full">
+                            <!-- Input Box -->
+                            <div class="w-full lg:w-[40%] flex flex-col gap-4 glass-panel p-6 rounded-[2rem] h-full">
+                                <div class="flex-1 flex flex-col">
+                                    <label class="block text-[11px] font-medium text-gray-400 mb-2 uppercase tracking-wider">Catatan Proyek</label>
+                                    <textarea id="prd-notes" class="w-full flex-1 p-4 bg-[#09090b] border border-white/5 rounded-2xl resize-none focus:ring-1 focus:ring-emerald-500 outline-none text-gray-200 text-sm placeholder-gray-600 custom-scrollbar" placeholder="Klien ingin aplikasi toko sepatu, ada fitur katalog..."></textarea>
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-[11px] font-medium text-gray-400 mb-2 uppercase tracking-wider">File Referensi</label>
+                                    <label class="flex flex-col items-center justify-center w-full h-24 border border-white/10 border-dashed rounded-2xl cursor-pointer bg-[#09090b] hover:bg-white/5 transition-colors">
+                                        <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                                            <i class="fa-solid fa-cloud-arrow-up text-gray-500 text-lg mb-2"></i>
+                                            <p class="text-[11px] text-gray-400"><span class="font-medium text-gray-300">Upload File</span> (IMG/PDF)</p>
+                                        </div>
+                                        <input type="file" id="prd-file" class="hidden" />
+                                    </label>
+                                </div>
+                                
+                                <button onclick="simulateAI('prd-output')" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-medium py-3.5 rounded-2xl transition-all flex items-center justify-center gap-2 text-sm shadow-[0_0_20px_rgba(16,185,129,0.3)] mt-2">
+                                    <i class="fa-solid fa-wand-magic-sparkles"></i> Generate PRD.md
+                                </button>
+                            </div>
+
+                            <!-- Output Box -->
+                            <div class="w-full lg:w-[60%] flex flex-col glass-panel p-6 rounded-[2rem] h-full">
+                                <div class="flex justify-between items-center mb-4">
+                                    <label class="block text-[11px] font-medium text-gray-400 uppercase tracking-wider">Hasil PRD.md</label>
+                                    <button class="text-[11px] bg-white/10 hover:bg-white/20 px-3 py-1.5 rounded-lg text-white transition-colors flex items-center gap-1.5">
+                                        <i class="fa-solid fa-download"></i> Download
+                                    </button>
+                                </div>
+                                <textarea id="prd-output" readonly class="flex-1 w-full p-6 border border-white/5 rounded-2xl bg-[#09090b] text-gray-200 text-sm custom-scrollbar outline-none resize-none font-mono" placeholder="Dokumen Markdown akan dihasilkan di sini..."></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 3. Design.md View -->
+                    <div id="design-view" class="view-panel hidden flex-col w-full max-w-6xl px-8 py-4 flex-1 min-h-0">
+                        <div class="mb-6">
+                            <h2 class="text-2xl font-semibold text-white mb-2">Design Analyzer</h2>
+                            <p class="text-gray-400 text-sm">Unggah gambar UI untuk menghasilkan struktur component-driven design.md.</p>
+                        </div>
+                        
+                        <div class="flex flex-col lg:flex-row gap-6 flex-1 min-h-0 pb-8 w-full">
+                            <!-- Input Section -->
+                            <div class="w-full lg:w-[40%] flex flex-col gap-4 glass-panel p-6 rounded-[2rem] h-full">
+                                <div class="flex-1 flex flex-col">
+                                    <label class="block text-[11px] font-medium text-gray-400 mb-2 uppercase tracking-wider">Gambar Referensi Desain</label>
+                                    <label class="flex-1 flex flex-col items-center justify-center border border-white/10 border-dashed rounded-2xl cursor-pointer bg-[#09090b] hover:bg-white/5 transition-colors group">
+                                        <div class="flex flex-col items-center justify-center">
+                                            <div class="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                                                <i class="fa-regular fa-image text-gray-400 text-xl"></i>
+                                            </div>
+                                            <p class="mb-1 text-xs font-medium text-gray-300">Upload Gambar UI</p>
+                                        </div>
+                                        <input type="file" id="design-file" class="hidden" accept="image/*" />
+                                    </label>
+                                </div>
+                                
+                                <button onclick="simulateAI('design-output')" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-medium py-3.5 rounded-2xl transition-all flex items-center justify-center gap-2 text-sm shadow-[0_0_20px_rgba(59,130,246,0.3)] mt-2">
+                                    <i class="fa-solid fa-palette"></i> Analyze & Generate
+                                </button>
+                            </div>
+
+                            <!-- Output Section -->
+                            <div class="w-full lg:w-[60%] flex flex-col glass-panel p-6 rounded-[2rem] h-full">
+                                <div class="flex justify-between items-center mb-4">
+                                    <label class="block text-[11px] font-medium text-gray-400 uppercase tracking-wider">Hasil Design.md</label>
+                                    <button class="text-[11px] bg-white/10 hover:bg-white/20 px-3 py-1.5 rounded-lg text-white transition-colors flex items-center gap-1.5">
+                                        <i class="fa-solid fa-download"></i> Download
+                                    </button>
+                                </div>
+                                <textarea id="design-output" readonly class="flex-1 w-full p-6 border border-white/5 rounded-2xl bg-[#09090b] text-gray-200 text-sm custom-scrollbar outline-none resize-none font-mono" placeholder="Hasil analisis desain komponen akan muncul di sini..."></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 4. Prompt for Stitch View -->
+                    <div id="prompt-view" class="view-panel hidden flex-col w-full max-w-6xl px-8 py-4 flex-1 min-h-0">
+                        <div class="mb-6">
+                            <h2 class="text-2xl font-semibold text-white mb-2">Stitch Prompter</h2>
+                            <p class="text-gray-400 text-sm">Gabungkan PRD.md dan Design.md untuk merakit instruksi presisi bagi Google Stitch.</p>
+                        </div>
+                        
+                        <div class="flex flex-col gap-6 flex-1 min-h-0 pb-8 w-full">
+                            <!-- Inputs Row -->
+                            <div class="flex flex-col lg:flex-row gap-6 h-1/2">
+                                <div class="w-full lg:w-1/2 flex flex-col glass-panel p-5 rounded-[2rem]">
+                                     <label class="block text-[11px] font-medium text-gray-400 uppercase tracking-wider mb-3">Teks PRD.md</label>
+                                     <textarea id="prompt-prd-text" class="w-full flex-1 p-4 bg-[#09090b] border border-white/5 rounded-2xl resize-none text-[13px] font-mono focus:ring-1 focus:ring-emerald-500 outline-none text-gray-300 custom-scrollbar" placeholder="Paste isi PRD.md di sini..."></textarea>
+                                </div>
+                                <div class="w-full lg:w-1/2 flex flex-col glass-panel p-5 rounded-[2rem]">
+                                     <label class="block text-[11px] font-medium text-gray-400 uppercase tracking-wider mb-3">Teks Design.md</label>
+                                     <textarea id="prompt-design-text" class="w-full flex-1 p-4 bg-[#09090b] border border-white/5 rounded-2xl resize-none text-[13px] font-mono focus:ring-1 focus:ring-emerald-500 outline-none text-gray-300 custom-scrollbar" placeholder="Paste isi Design.md di sini..."></textarea>
+                                </div>
+                            </div>
+                            
+                            <!-- Action & Output Row -->
+                            <div class="flex flex-col h-1/2 gap-4">
+                                <button onclick="simulateAI('prompt-output')" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-medium py-3.5 rounded-2xl transition-all flex items-center justify-center gap-2 text-sm shadow-[0_0_20px_rgba(16,185,129,0.3)]">
+                                    <i class="fa-solid fa-code"></i> Generate Prompt for Stitch
+                                </button>
+                                
+                                <div class="w-full flex-1 flex flex-col glass-panel p-5 rounded-[2rem] border border-emerald-500/20 shadow-lg shadow-emerald-900/10">
+                                    <div class="flex justify-between items-center mb-3">
+                                        <label class="block text-[11px] font-medium text-emerald-400 uppercase tracking-wider">Final Prompt (Siap Copy)</label>
+                                        <button class="text-[11px] bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1.5">
+                                            <i class="fa-regular fa-copy"></i> Copy Text
+                                        </button>
+                                    </div>
+                                    <textarea id="prompt-output" readonly class="w-full flex-1 p-5 border border-white/5 rounded-2xl resize-none text-[13px] bg-[#09090b] text-gray-100 focus:outline-none custom-scrollbar leading-relaxed" placeholder="Hasil prompt satu paragraf untuk Google Stitch..."></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        // --- 1. State Management ---
+        let isLoginMode = false;
+        
+        // --- 2. DOM Elements (Auth) ---
+        const authView = document.getElementById('auth-view');
+        const appView = document.getElementById('app-view');
+        const authForm = document.getElementById('auth-form');
+        const toggleAuthBtn = document.getElementById('toggle-auth');
+        const authTitle = document.getElementById('auth-title');
+        const authSubtitle = document.getElementById('auth-subtitle');
+        const nameFields = document.getElementById('name-fields');
+        const submitBtn = authForm.querySelector('button[type="submit"]');
+        const toggleText = document.getElementById('toggle-text');
+        const logoutBtn = document.getElementById('logout-btn');
+        const passwordHint = document.getElementById('password-hint');
+        
+        // --- 3. Authentication UI Toggles ---
+        toggleAuthBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            isLoginMode = !isLoginMode;
+            
+            if (isLoginMode) {
+                // Switch to Login View
+                authTitle.textContent = 'Log In';
+                authSubtitle.textContent = 'Welcome back! Please enter your details.';
+                nameFields.style.display = 'none'; // Hide first/last name
+                nameFields.querySelectorAll('input').forEach(input => input.removeAttribute('required'));
+                submitBtn.textContent = 'Log In';
+                toggleText.textContent = "Don't have an account?";
+                toggleAuthBtn.textContent = 'Sign up';
+                passwordHint.style.display = 'none';
+            } else {
+                // Switch to Sign Up View
+                authTitle.textContent = 'Sign Up Account';
+                authSubtitle.textContent = 'Enter your personal data to create your account.';
+                nameFields.style.display = 'flex'; // Show first/last name
+                submitBtn.textContent = 'Sign Up';
+                toggleText.textContent = 'Already have an account?';
+                toggleAuthBtn.textContent = 'Log in';
+                passwordHint.style.display = 'block';
+            }
+        });
+        
+        // --- 4. Login Submission Simulation ---
+        authForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            // In a real app, you would validate with Firebase/Google Apps Script here.
+            // For prototype, we just transition seamlessly to the dashboard.
+            authView.classList.add('hidden');
+            appView.classList.remove('hidden');
+            appView.classList.add('flex');
+        });
+        
+        // --- 5. Logout Simulation ---
+        logoutBtn.addEventListener('click', () => {
+            appView.classList.remove('flex');
+            appView.classList.add('hidden');
+            authView.classList.remove('hidden');
+            
+            // Reset form
+            authForm.reset();
+        });
+        
+        // --- 6. Dashboard Navigation Logic ---
+        const navBtns = document.querySelectorAll('.nav-btn, .card-nav, [data-target="dashboard-home-view"]');
+        const viewPanels = document.querySelectorAll('.view-panel');
+        
+        navBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                // Handle styling for Sidebar buttons specifically
+                if (btn.classList.contains('nav-btn')) {
+                    document.querySelectorAll('.nav-btn').forEach(b => {
+                        b.classList.remove('bg-white/10', 'text-white');
+                        b.classList.add('text-gray-400');
+                    });
+                    btn.classList.add('bg-white/10', 'text-white');
+                    btn.classList.remove('text-gray-400');
+                }
+                
+                // Determine target view
+                const targetId = btn.getAttribute('data-target') || btn.closest('[data-target]')?.getAttribute('data-target');
+                if (!targetId) return;
+                
+                // Show target view, hide others
+                viewPanels.forEach(panel => {
+                    if (panel.id === targetId) {
+                        panel.classList.remove('hidden');
+                        panel.classList.add('flex');
+                    } else {
+                        panel.classList.add('hidden');
+                        panel.classList.remove('flex');
+                    }
+                });
+                
+                // Sync sidebar highlight if clicked from a dashboard card shortcut
+                if (!btn.classList.contains('nav-btn')) {
+                    document.querySelectorAll('.nav-btn').forEach(b => {
+                        if (b.getAttribute('data-target') === targetId) {
+                            b.classList.add('bg-white/10', 'text-white');
+                            b.classList.remove('text-gray-400');
+                        } else {
+                            b.classList.remove('bg-white/10', 'text-white');
+                            b.classList.add('text-gray-400');
+                        }
+                    });
+                }
+            });
+        });
+
+        // Initialize view states (only show home on load)
+        viewPanels.forEach(panel => {
+            if (panel.id !== 'dashboard-home-view') {
+                 panel.classList.add('hidden');
+                 panel.classList.remove('flex');
+            }
+        });
+        
+        // --- 7. AI Logic & Output Handling ---
+        let currentModel = 'Gemini 3.5 Flash';
+
+        function selectModel(modelName) {
+            currentModel = modelName;
+            document.getElementById('selected-model-text').textContent = modelName;
+            
+            // Update UI styling for dropdown
+            document.querySelectorAll('.model-option').forEach(el => {
+                const checkIcon = el.querySelector('.check-icon');
+                if (el.getAttribute('data-model') === modelName) {
+                    el.classList.add('bg-white/5', 'text-emerald-400');
+                    el.classList.remove('text-gray-300');
+                    checkIcon.classList.remove('hidden');
+                } else {
+                    el.classList.remove('bg-white/5', 'text-emerald-400');
+                    el.classList.add('text-gray-300');
+                    checkIcon.classList.add('hidden');
+                }
+            });
+        }
+
+        function fileToBase64(file) {
+            return new Promise((resolve, reject) => {
+                if (!file) return resolve(null);
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => {
+                    const result = reader.result;
+                    const base64 = result.split(',')[1];
+                    resolve({ base64, mimeType: file.type });
+                };
+                reader.onerror = error => reject(error);
+            });
+        }
+
+        async function simulateAI(targetElementId) {
+            const target = document.getElementById(targetElementId);
+            target.value = "AI is processing your request...\nThis usually takes a few seconds.";
+            
+            try {
+                let endpoint = '';
+                let payload = { model: currentModel };
+
+                if (targetElementId === 'prd-output') {
+                    endpoint = '/api/make-prd';
+                    payload.notes = document.getElementById('prd-notes').value;
+                    const fileInput = document.getElementById('prd-file');
+                    if (fileInput.files.length > 0) {
+                        const fileData = await fileToBase64(fileInput.files[0]);
+                        payload.fileData = fileData.base64;
+                        payload.mimeType = fileData.mimeType;
+                    }
+                } else if (targetElementId === 'design-output') {
+                    endpoint = '/api/make-design';
+                    const fileInput = document.getElementById('design-file');
+                    if (fileInput.files.length > 0) {
+                        const fileData = await fileToBase64(fileInput.files[0]);
+                        payload.fileData = fileData.base64;
+                        payload.mimeType = fileData.mimeType;
+                    } else {
+                        throw new Error("Please upload a UI reference image first.");
+                    }
+                } else if (targetElementId === 'prompt-output') {
+                    endpoint = '/api/make-prompt';
+                    payload.prdText = document.getElementById('prompt-prd-text').value;
+                    payload.designText = document.getElementById('prompt-design-text').value;
+                }
+
+                const response = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(data.error || 'Terjadi kesalahan pada server');
+                }
+
+                target.value = data.text;
+            } catch (error) {
+                target.value = `Error: ${error.message}`;
+            }
+        }
+    </script>
+</body>
+</html>
