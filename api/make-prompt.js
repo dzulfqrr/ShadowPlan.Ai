@@ -22,7 +22,7 @@ export default async function handler(req, res) {
         await deductToken(email);
     }
 
-    const ai = new GoogleGenAI(customApiKey ? { apiKey: customApiKey } : {});
+    const ai = customApiKey ? new GoogleGenAI({ apiKey: customApiKey }) : new GoogleGenAI();
     
     let selectedModel = 'gemini-1.5-flash';
     if (model === 'Gemini 1.5 Pro') selectedModel = 'gemini-1.5-pro';

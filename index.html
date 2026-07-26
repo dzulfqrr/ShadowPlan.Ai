@@ -941,7 +941,7 @@
                 const data = await response.json();
                 
                 if (!response.ok) {
-                    throw new Error(data.error || 'Terjadi kesalahan pada server');
+                    throw new Error(data.details || data.error || 'Terjadi kesalahan pada server');
                 }
 
                 if (target.tagName === 'TEXTAREA' || target.tagName === 'INPUT') {
