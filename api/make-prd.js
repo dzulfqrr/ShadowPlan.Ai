@@ -7,7 +7,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { notes, fileData, mimeType, model, email } = req.body;
+    const { notes, fileData, mimeType, model, email, customApiKey } = req.body;
     
     if (!email) {
       return res.status(401).json({ error: 'Unauthorized: Harap login terlebih dahulu.' });
@@ -17,13 +17,17 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Please provide notes or a reference file.' });
     }
 
-    // Cek dan kurangi token pengguna
-    await deductToken(email);
+    // Cek dan kurangi token pengguna (bisa dinonaktifkan jika ada customApiKey jika diinginkan)
+    if (!customApiKey) {
+        await deductToken(email);
+    }
 
-    // Initialize Gemini SDK (it automatically picks up GEMINI_API_KEY from environment)
-    const ai = new GoogleGenAI({});
+    // Initialize Gemini SDK
+    const ai = new GoogleGenAI(customApiKey ? { apiKey: customApiKey } : {});
     
-    const selectedModel = model === 'Gemini 3.1 Pro' ? 'gemini-3.1-pro' : 'gemini-3.5-flash';
+    let selectedModel = 'gemini-1.5-flash';
+    if (model === 'Gemini 1.5 Pro') selectedModel = 'gemini-1.5-pro';
+    else if (model && model !== 'Gemini 1.5 Flash') selectedModel = model;
 
     const promptText = `
 Anda adalah seorang Product Manager ahli. 

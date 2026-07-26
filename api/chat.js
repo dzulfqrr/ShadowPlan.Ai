@@ -7,7 +7,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { message, model, email } = req.body;
+    const { message, model, email, customApiKey } = req.body;
     
     if (!email) {
       return res.status(401).json({ error: 'Unauthorized: Harap login terlebih dahulu.' });
@@ -17,13 +17,17 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Pesan tidak boleh kosong.' });
     }
 
-    // Cek dan kurangi token pengguna
-    await deductToken(email);
+    if (!customApiKey) {
+        // Cek dan kurangi token pengguna
+        await deductToken(email);
+    }
 
     // Initialize Gemini SDK
-    const ai = new GoogleGenAI({});
+    const ai = new GoogleGenAI(customApiKey ? { apiKey: customApiKey } : {});
     
-    const selectedModel = model === 'Gemini 3.1 Pro' ? 'gemini-3.1-pro' : 'gemini-3.5-flash';
+    let selectedModel = 'gemini-1.5-flash';
+    if (model === 'Gemini 1.5 Pro') selectedModel = 'gemini-1.5-pro';
+    else if (model && model !== 'Gemini 1.5 Flash') selectedModel = model;
 
     const promptText = `
 Anda adalah ShadowPlan AI, asisten AI canggih yang dibuat oleh Blackone.ai Group.

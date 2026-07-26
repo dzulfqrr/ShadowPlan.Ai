@@ -8,6 +8,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     
     <style>
         body { 
@@ -200,22 +201,22 @@
                         <!-- Dropdown Model AI Selection -->
                     <div id="model-dropdown-btn" onclick="toggleModelDropdown()" class="flex items-center gap-2 bg-[#18181b] px-4 py-2 rounded-xl border border-white/5 cursor-pointer hover:bg-[#27272a] transition-all relative">
                         <i class="fa-solid fa-sparkles text-emerald-400 text-xs"></i>
-                        <span id="selected-model-text" class="text-sm font-medium text-gray-200">Gemini 3.5 Flash</span>
+                        <span id="selected-model-text" class="text-sm font-medium text-gray-200">Gemini 1.5 Flash</span>
                         <i class="fa-solid fa-chevron-down text-[10px] text-gray-400 ml-1"></i>
                         
                         <!-- Dropdown Menu -->
                         <div id="model-dropdown-menu" class="absolute top-full left-0 mt-2 w-48 bg-[#18181b] border border-white/10 rounded-xl shadow-2xl opacity-0 invisible transition-all duration-200 z-50 overflow-hidden">
-                            <div onclick="selectModel('Gemini 3.5 Flash'); event.stopPropagation();" class="px-4 py-3 bg-white/5 cursor-pointer text-sm text-emerald-400 flex items-center justify-between border-b border-white/5 model-option" data-model="Gemini 3.5 Flash">
+                            <div onclick="selectModel('Gemini 1.5 Flash'); event.stopPropagation();" class="px-4 py-3 bg-white/5 cursor-pointer text-sm text-emerald-400 flex items-center justify-between border-b border-white/5 model-option" data-model="Gemini 1.5 Flash">
                                 <div class="flex items-center gap-2">
                                     <i class="fa-solid fa-bolt text-emerald-400"></i>
-                                    <span>Gemini 3.5 Flash</span>
+                                    <span>Gemini 1.5 Flash</span>
                                 </div>
                                 <i class="fa-solid fa-check text-xs check-icon"></i>
                             </div>
-                            <div onclick="selectModel('Gemini 3.1 Pro'); event.stopPropagation();" class="px-4 py-3 hover:bg-white/5 cursor-pointer text-sm text-gray-300 transition-colors flex items-center justify-between model-option" data-model="Gemini 3.1 Pro">
+                            <div onclick="selectModel('Gemini 1.5 Pro'); event.stopPropagation();" class="px-4 py-3 hover:bg-white/5 cursor-pointer text-sm text-gray-300 transition-colors flex items-center justify-between model-option" data-model="Gemini 1.5 Pro">
                                 <div class="flex items-center gap-2">
                                     <i class="fa-solid fa-brain text-gray-400"></i>
-                                    <span>Gemini 3.1 Pro</span>
+                                    <span>Gemini 1.5 Pro</span>
                                 </div>
                                 <i class="fa-solid fa-check text-xs check-icon hidden"></i>
                             </div>
@@ -236,7 +237,7 @@
                 <div class="flex-1 overflow-y-auto custom-scrollbar relative z-10 w-full flex flex-col items-center">
                     
                     <!-- 1. Dashboard Home View -->
-                    <div id="dashboard-home-view" class="view-panel flex flex-col items-center w-full max-w-4xl px-8 pt-12 md:pt-24 flex-1 min-h-0 pb-12">
+                    <div id="dashboard-home-view" class="view-panel flex flex-col items-center w-full max-w-4xl px-8 pt-12 md:pt-24 flex-1 min-h-0 pb-32">
                         
                         <!-- Glowing Orb (Zyricon style) -->
                         <div class="w-16 h-16 rounded-full bg-gradient-to-br from-[#a855f7] to-[#3b82f6] mb-8 shadow-[0_0_50px_rgba(168,85,247,0.4)] flex items-center justify-center relative">
@@ -267,10 +268,12 @@
                             </div>
                             
                             <div class="flex justify-between items-center px-4 py-2 border-t border-white/5 pt-3 mt-1">
-                                <div class="flex gap-4">
-                                    <button onclick="alert('Fitur Attach akan segera hadir!')" class="text-gray-400 hover:text-gray-200 flex items-center gap-1.5 text-xs font-medium transition-colors"><i class="fa-solid fa-paperclip"></i> Attach</button>
-                                    <button onclick="alert('Fitur Settings akan segera hadir!')" class="text-gray-400 hover:text-gray-200 flex items-center gap-1.5 text-xs font-medium transition-colors"><i class="fa-solid fa-sliders"></i> Settings</button>
-                                    <button onclick="alert('Fitur Options akan segera hadir!')" class="text-gray-400 hover:text-gray-200 flex items-center gap-1.5 text-xs font-medium transition-colors"><i class="fa-solid fa-border-all"></i> Options</button>
+                                <div class="flex gap-4 items-center">
+                                    <label class="text-gray-400 hover:text-gray-200 flex items-center gap-1.5 text-xs font-medium transition-colors cursor-pointer">
+                                        <i class="fa-solid fa-paperclip"></i> Attach
+                                        <input type="file" id="chat-attach" class="hidden" multiple accept="*/*" onchange="const files = this.files; if(files.length > 0) { document.getElementById('chat-attach-status').innerHTML = '<i class=\'fa-solid fa-check\'></i> ' + files.length + ' file(s)'; document.getElementById('chat-attach-status').classList.remove('hidden'); }">
+                                    </label>
+                                    <span id="chat-attach-status" class="text-emerald-400 text-xs hidden items-center gap-1"></span>
                                 </div>
                                 <div class="flex gap-2">
                                     <button onclick="simulateAI('chat-output')" class="w-9 h-9 rounded-full bg-emerald-600 hover:bg-emerald-500 flex items-center justify-center text-white transition-colors shadow-[0_0_15px_rgba(16,185,129,0.5)]">
@@ -345,14 +348,14 @@
                                 
                                 <div>
                                     <label class="block text-[11px] font-medium text-gray-400 mb-2 uppercase tracking-wider">File Referensi</label>
-                                    <label class="flex flex-col items-center justify-center w-full h-24 border border-white/10 border-dashed rounded-2xl cursor-pointer bg-[#09090b] hover:bg-white/5 transition-colors">
-                                        <div class="flex flex-col items-center justify-center pt-5 pb-6">
-                                            <i class="fa-solid fa-cloud-arrow-up text-gray-500 text-lg mb-2"></i>
+                                    <label id="prd-upload-label" class="flex flex-col items-center justify-center w-full h-24 border border-white/10 border-dashed rounded-2xl cursor-pointer bg-[#09090b] hover:bg-white/5 transition-colors">
+                                        <div id="prd-upload-content" class="flex flex-col items-center justify-center pt-5 pb-6">
+                                            <i class="fa-solid fa-cloud-arrow-up text-gray-500 text-lg mb-2" id="prd-upload-icon"></i>
                                             <p class="text-[11px] text-gray-400"><span class="font-medium text-gray-300">Upload File</span> (IMG/PDF)</p>
                                         </div>
-                                        <input type="file" id="prd-file" class="hidden" onchange="document.getElementById('prd-file-name').textContent = this.files[0] ? this.files[0].name : ''; document.getElementById('prd-file-name').classList.remove('hidden');" />
+                                        <input type="file" id="prd-file" class="hidden" onchange="const file = this.files[0]; if(file){ document.getElementById('prd-file-name').textContent = file.name; document.getElementById('prd-file-name').classList.remove('hidden'); document.getElementById('prd-upload-icon').className = 'fa-solid fa-file-circle-check text-emerald-400 text-2xl mb-2'; document.getElementById('prd-upload-label').classList.add('border-emerald-500/50', 'bg-emerald-900/10'); } else { document.getElementById('prd-file-name').classList.add('hidden'); document.getElementById('prd-upload-icon').className = 'fa-solid fa-cloud-arrow-up text-gray-500 text-lg mb-2'; document.getElementById('prd-upload-label').classList.remove('border-emerald-500/50', 'bg-emerald-900/10'); }" />
                                     </label>
-                                    <div id="prd-file-name" class="text-xs text-emerald-400 mt-2 hidden text-center w-full truncate px-2"></div>
+                                    <div id="prd-file-name" class="text-xs text-emerald-400 mt-2 hidden text-center w-full truncate px-2 font-medium"></div>
                                 </div>
                                 
                                 <div class="flex gap-2 mt-2">
@@ -368,12 +371,17 @@
                             <!-- Output Box -->
                             <div class="w-full lg:w-[60%] flex flex-col glass-panel p-6 rounded-[2rem] h-full">
                                 <div class="flex justify-between items-center mb-4">
-                                    <label class="block text-[11px] font-medium text-gray-400 uppercase tracking-wider">Hasil PRD.md</label>
-                                    <button onclick="downloadText('prd-output', 'PRD_Document.md')" class="text-[11px] bg-white/10 hover:bg-white/20 px-3 py-1.5 rounded-lg text-white transition-colors flex items-center gap-1.5">
-                                        <i class="fa-solid fa-download"></i> Download
-                                    </button>
+                                    <label class="block text-[11px] font-medium text-gray-400 uppercase tracking-wider">Hasil PRD</label>
+                                    <div class="flex gap-2">
+                                        <button onclick="downloadText('prd-output', 'PRD_Document.md')" class="text-[11px] bg-white/10 hover:bg-white/20 px-3 py-1.5 rounded-lg text-white transition-colors flex items-center gap-1.5">
+                                            <i class="fa-brands fa-markdown"></i> .md
+                                        </button>
+                                        <button onclick="downloadPDF('prd-output', 'PRD_Document.pdf')" class="text-[11px] bg-emerald-600/80 hover:bg-emerald-500 px-3 py-1.5 rounded-lg text-white transition-colors flex items-center gap-1.5">
+                                            <i class="fa-solid fa-file-pdf"></i> .pdf
+                                        </button>
+                                    </div>
                                 </div>
-                                <textarea id="prd-output" readonly class="flex-1 w-full p-6 border border-white/5 rounded-2xl bg-[#09090b] text-gray-200 text-sm custom-scrollbar outline-none resize-none font-mono" placeholder="Dokumen Markdown akan dihasilkan di sini..."></textarea>
+                                <textarea id="prd-output" readonly class="flex-1 w-full p-6 border border-white/5 rounded-2xl bg-[#09090b] text-gray-200 text-sm custom-scrollbar outline-none resize-none font-mono" placeholder="Dokumen akan dihasilkan di sini..."></textarea>
                             </div>
                         </div>
                     </div>
@@ -883,9 +891,13 @@
                     throw new Error("Unauthorized: Harap login terlebih dahulu.");
                 }
 
+                const customModelName = localStorage.getItem('custom_model_name');
+                const customApiKey = localStorage.getItem('custom_api_key');
+
                 let payload = { 
-                    model: currentModel,
-                    email: userEmail
+                    model: customModelName || currentModel,
+                    email: userEmail,
+                    customApiKey: customApiKey
                 };
 
                 if (targetElementId === 'prd-output') {
@@ -912,6 +924,10 @@
                     document.getElementById('chat-output-container').classList.add('flex');
                     endpoint = '/api/chat';
                     payload.message = document.getElementById('chat-input').value;
+                } else if (targetElementId === 'prompt-output') {
+                    endpoint = '/api/make-prompt';
+                    payload.prdText = document.getElementById('prompt-prd-text').value;
+                    payload.designText = document.getElementById('prompt-design-text').value;
                 }
 
                 const response = await fetch(endpoint, {
@@ -956,22 +972,48 @@
             URL.revokeObjectURL(url);
         }
 
+        function downloadPDF(elementId, filename) {
+            const text = document.getElementById(elementId).value;
+            if (!text) {
+                alert("Tidak ada teks untuk didownload.");
+                return;
+            }
+            
+            // Convert markdown basic formatting to HTML for simple PDF view
+            const formattedHTML = text
+                .replace(/\n/g, '<br>')
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/\*(.*?)\*/g, '<em>$1</em>')
+                .replace(/### (.*?)(<br>|$)/g, '<h3>$1</h3>')
+                .replace(/## (.*?)(<br>|$)/g, '<h2>$1</h2>')
+                .replace(/# (.*?)(<br>|$)/g, '<h1>$1</h1>');
+                
+            const wrapper = document.createElement('div');
+            wrapper.innerHTML = `<div style="font-family: Arial, sans-serif; padding: 20px; line-height: 1.6; color: #333;">${formattedHTML}</div>`;
+            
+            const opt = {
+                margin:       1,
+                filename:     filename,
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2 },
+                jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
+            };
+            
+            html2pdf().set(opt).from(wrapper).save();
+        }
+
         function openConfigModal() { 
             document.getElementById('config-modal').classList.remove('hidden'); 
             document.getElementById('config-modal').classList.add('flex'); 
             // Load saved keys
-            document.getElementById('config-gemini').value = localStorage.getItem('key_gemini') || '';
-            document.getElementById('config-openai').value = localStorage.getItem('key_openai') || '';
-            document.getElementById('config-deepseek').value = localStorage.getItem('key_deepseek') || '';
-            document.getElementById('config-anthropic').value = localStorage.getItem('key_anthropic') || '';
+            document.getElementById('custom-model-name').value = localStorage.getItem('custom_model_name') || '';
+            document.getElementById('custom-api-key').value = localStorage.getItem('custom_api_key') || '';
         }
         function closeConfigModal() { document.getElementById('config-modal').classList.add('hidden'); document.getElementById('config-modal').classList.remove('flex'); }
         
         function saveConfig() {
-            localStorage.setItem('key_gemini', document.getElementById('config-gemini').value);
-            localStorage.setItem('key_openai', document.getElementById('config-openai').value);
-            localStorage.setItem('key_deepseek', document.getElementById('config-deepseek').value);
-            localStorage.setItem('key_anthropic', document.getElementById('config-anthropic').value);
+            localStorage.setItem('custom_model_name', document.getElementById('custom-model-name').value);
+            localStorage.setItem('custom_api_key', document.getElementById('custom-api-key').value);
             alert("Konfigurasi API Key berhasil disimpan di browser Anda.");
             closeConfigModal();
         }
@@ -1076,32 +1118,26 @@
 
     <!-- Config Modal -->
     <div id="config-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[100] hidden items-center justify-center p-4">
-        <div class="bg-[#18181b] border border-white/10 rounded-3xl p-8 max-w-md w-full relative shadow-2xl">
+        <div class="bg-[#18181b] border border-white/10 rounded-3xl p-8 max-w-lg w-full relative shadow-2xl">
             <button onclick="closeConfigModal()" class="absolute top-4 right-4 text-gray-500 hover:text-white transition-colors"><i class="fa-solid fa-xmark"></i></button>
             <div class="flex items-center gap-3 mb-2">
                 <i class="fa-solid fa-lock text-emerald-400 text-xl"></i>
                 <h3 class="text-xl font-semibold text-white">Configuration</h3>
             </div>
-            <p class="text-xs text-gray-400 mb-6">Fitur ini hanya dapat diakses oleh Administrator dan Pengguna Premium.</p>
+            <p class="text-xs text-gray-400 mb-6">Tambahkan custom API Key Anda di bawah ini agar bebas menggunakan API model pilihan Anda.</p>
             
-            <div class="space-y-4 mb-6 max-h-[60vh] overflow-y-auto custom-scrollbar pr-2">
-                <div>
-                    <label class="block text-xs text-gray-500 uppercase mb-2">Custom Gemini API Key</label>
-                    <input type="password" id="config-gemini" placeholder="AIzaSy..." class="w-full bg-[#09090b] border border-white/10 rounded-xl px-4 py-3 text-sm text-gray-200 focus:outline-none focus:border-emerald-500">
-                    <p class="text-[10px] text-gray-500 mt-2">Biarkan kosong untuk menggunakan API Key bawaan sistem.</p>
+            <div class="space-y-4 mb-6">
+                <div class="flex gap-4 w-full">
+                    <div class="w-1/3">
+                        <label class="block text-xs text-gray-500 uppercase mb-2">Model Name :</label>
+                        <input type="text" id="custom-model-name" placeholder="e.g. gpt-4o" class="w-full bg-[#09090b] border border-white/10 rounded-xl px-4 py-3 text-sm text-gray-200 focus:outline-none focus:border-emerald-500">
+                    </div>
+                    <div class="w-2/3">
+                        <label class="block text-xs text-gray-500 uppercase mb-2">API-Key :</label>
+                        <input type="password" id="custom-api-key" placeholder="sk-..." class="w-full bg-[#09090b] border border-white/10 rounded-xl px-4 py-3 text-sm text-gray-200 focus:outline-none focus:border-emerald-500">
+                    </div>
                 </div>
-                <div>
-                    <label class="block text-xs text-gray-500 uppercase mb-2">OpenAI API Key (ChatGPT)</label>
-                    <input type="password" id="config-openai" placeholder="sk-proj-..." class="w-full bg-[#09090b] border border-white/10 rounded-xl px-4 py-3 text-sm text-gray-200 focus:outline-none focus:border-emerald-500">
-                </div>
-                <div>
-                    <label class="block text-xs text-gray-500 uppercase mb-2">DeepSeek API Key</label>
-                    <input type="password" id="config-deepseek" placeholder="sk-..." class="w-full bg-[#09090b] border border-white/10 rounded-xl px-4 py-3 text-sm text-gray-200 focus:outline-none focus:border-emerald-500">
-                </div>
-                <div>
-                    <label class="block text-xs text-gray-500 uppercase mb-2">Anthropic API Key (Claude)</label>
-                    <input type="password" id="config-anthropic" placeholder="sk-ant-..." class="w-full bg-[#09090b] border border-white/10 rounded-xl px-4 py-3 text-sm text-gray-200 focus:outline-none focus:border-emerald-500">
-                </div>
+                <p class="text-[10px] text-gray-500 mt-2">Biarkan kosong untuk menggunakan model dan API Key bawaan sistem.</p>
             </div>
             <button onclick="saveConfig()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-medium py-3 rounded-xl transition-colors">Simpan Konfigurasi</button>
         </div>
