@@ -7,6 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
     
     <style>
         body { 
@@ -40,6 +41,10 @@
             
             <!-- Left Panel (Forest Gradient) -->
             <div class="hidden md:flex w-1/2 forest-gradient p-12 flex-col justify-center relative">
+                <!-- Identity -->
+                <div class="absolute top-8 left-8 text-white font-bold text-xl tracking-wider flex items-center gap-2 z-20">
+                    <i class="fa-solid fa-wand-magic-sparkles text-emerald-400"></i> ShadowPlan.Ai
+                </div>
                 <!-- Background decoration -->
                 <div class="absolute top-0 right-0 w-64 h-64 bg-emerald-500/10 rounded-full blur-[80px] pointer-events-none"></div>
                 
@@ -57,7 +62,7 @@
                     </div>
                     <div class="bg-white/10 text-white p-5 rounded-2xl w-32 aspect-square flex flex-col justify-between backdrop-blur-md border border-white/10">
                         <div class="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center text-xs font-bold">3</div>
-                        <p class="text-sm font-medium">Set up your profile</p>
+                        <p class="text-sm font-medium">Make your planing</p>
                     </div>
                 </div>
             </div>
@@ -71,10 +76,10 @@
                     </div>
                     
                     <div class="flex gap-4 mb-6">
-                        <button class="flex-1 flex items-center justify-center gap-2 bg-transparent border border-white/10 text-white rounded-xl py-3 hover:bg-white/5 transition-colors text-sm font-medium">
+                        <button onclick="handleGoogleLogin()" class="flex-1 flex items-center justify-center gap-2 bg-transparent border border-white/10 text-white rounded-xl py-3 hover:bg-white/5 transition-colors text-sm font-medium">
                             <i class="fa-brands fa-google text-lg"></i> Google
                         </button>
-                        <button class="flex-1 flex items-center justify-center gap-2 bg-transparent border border-white/10 text-white rounded-xl py-3 hover:bg-white/5 transition-colors text-sm font-medium">
+                        <button onclick="handleGithubLogin()" class="flex-1 flex items-center justify-center gap-2 bg-transparent border border-white/10 text-white rounded-xl py-3 hover:bg-white/5 transition-colors text-sm font-medium">
                             <i class="fa-brands fa-github text-lg"></i> Github
                         </button>
                     </div>
@@ -106,7 +111,7 @@
                             <label class="block text-gray-400 text-xs mb-1.5 font-medium">Password</label>
                             <div class="relative">
                                 <input type="password" id="password" class="w-full bg-[#18181b] border border-white/5 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-white/20 focus:ring-1 focus:ring-white/20 transition-all" placeholder="Enter your password" required>
-                                <i class="fa-regular fa-eye-slash absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 cursor-pointer hover:text-gray-300 transition-colors"></i>
+                                <i id="toggle-password" onclick="togglePasswordVisibility()" class="fa-regular fa-eye-slash absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 cursor-pointer hover:text-gray-300 transition-colors"></i>
                             </div>
                             <p class="text-[10px] text-gray-500 mt-2" id="password-hint">Must be at least 8 characters.</p>
                         </div>
@@ -491,6 +496,144 @@
         const logoutBtn = document.getElementById('logout-btn');
         const passwordHint = document.getElementById('password-hint');
         
+        // --- 2.5 Auto-Login Check (24h Cache) ---
+        function checkAutoLogin() {
+            const userEmail = localStorage.getItem('userEmail');
+            const loginTimestamp = localStorage.getItem('loginTimestamp');
+            const now = new Date().getTime();
+            
+            // Check if 24 hours have passed (24 * 60 * 60 * 1000 = 86400000 ms)
+            if (userEmail && loginTimestamp && (now - parseInt(loginTimestamp)) < 86400000) {
+                // Populate profile modal with cached data
+                document.getElementById('profile-name').textContent = localStorage.getItem('userName') || 'User';
+                document.getElementById('profile-initials').textContent = (localStorage.getItem('userName') || 'US').substring(0, 2).toUpperCase();
+                document.getElementById('profile-role').textContent = localStorage.getItem('userRole') || 'User';
+                document.getElementById('profile-email').textContent = userEmail;
+                document.getElementById('profile-tokens').textContent = (localStorage.getItem('userTokens') || '12') + ' Tokens';
+                
+                authView.classList.add('hidden');
+                appView.classList.remove('hidden');
+                appView.classList.add('flex');
+            } else {
+                // Clear expired cache
+                localStorage.removeItem('userEmail');
+                localStorage.removeItem('userRole');
+                localStorage.removeItem('loginTimestamp');
+                localStorage.removeItem('userName');
+                localStorage.removeItem('userTokens');
+            }
+        }
+        
+        // Run check on page load
+        checkAutoLogin();
+        
+        // --- 2.5b Check Social Login Redirect (from Github Callback) ---
+        function checkSocialLoginRedirect() {
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('social_login') === 'success') {
+                const email = urlParams.get('email');
+                const name = urlParams.get('name');
+                const role = urlParams.get('role');
+                const tokens = urlParams.get('tokens');
+                
+                if (email) {
+                    localStorage.setItem('userEmail', email);
+                    localStorage.setItem('userRole', role);
+                    localStorage.setItem('userName', name);
+                    localStorage.setItem('userTokens', tokens);
+                    localStorage.setItem('loginTimestamp', new Date().getTime().toString());
+                    
+                    // Remove query parameters to clean URL
+                    window.history.replaceState({}, document.title, "/");
+                    
+                    // Trigger login check again
+                    checkAutoLogin();
+                }
+            }
+        }
+        checkSocialLoginRedirect();
+        
+        // --- 2.6 Password Eye Toggle ---
+        function togglePasswordVisibility() {
+            const passwordInput = document.getElementById('password');
+            const toggleIcon = document.getElementById('toggle-password');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleIcon.classList.remove('fa-eye-slash');
+                toggleIcon.classList.add('fa-eye');
+            } else {
+                passwordInput.type = 'password';
+                toggleIcon.classList.remove('fa-eye');
+                toggleIcon.classList.add('fa-eye-slash');
+            }
+        }
+        
+        // --- 2.7 Google & Github Social Login ---
+        
+        // Google GSI Handler
+        function handleGoogleCredentialResponse(response) {
+            // response.credential is a JWT
+            const base64Url = response.credential.split('.')[1];
+            const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+            const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+                return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+            }).join(''));
+            
+            const userData = JSON.parse(jsonPayload);
+            const email = userData.email;
+            const firstName = userData.given_name || '';
+            const lastName = userData.family_name || '';
+            
+            submitBtn.textContent = 'Logging in with Google...';
+            submitBtn.disabled = true;
+            
+            fetch('/api/auth', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'social_login', email, firstName, lastName })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    localStorage.setItem('userEmail', data.user.email);
+                    localStorage.setItem('userRole', data.user.role);
+                    localStorage.setItem('userName', data.user.name);
+                    localStorage.setItem('userTokens', data.user.tokens);
+                    localStorage.setItem('loginTimestamp', new Date().getTime().toString());
+                    checkAutoLogin();
+                } else {
+                    alert('Error: ' + data.error);
+                }
+            })
+            .catch(e => {
+                alert('Connection Error');
+            })
+            .finally(() => {
+                submitBtn.textContent = isLoginMode ? 'Log In' : 'Sign Up';
+                submitBtn.disabled = false;
+            });
+        }
+        
+        function handleGoogleLogin() {
+            if (typeof google === 'undefined') {
+                alert('Google SDK is loading, please try again in a moment.');
+                return;
+            }
+            google.accounts.id.initialize({
+                client_id: '889230204826-2d77f1tvepcce6oul8triggm44t39dn4.apps.googleusercontent.com',
+                callback: handleGoogleCredentialResponse
+            });
+            google.accounts.id.prompt();
+        }
+        
+        function handleGithubLogin() {
+            const GITHUB_CLIENT_ID = 'Ov23liqUMwhLX5Mghn6P';
+            const redirectUri = window.location.origin + '/api/auth';
+            const githubAuthUrl = `https://github.com/login/oauth/authorize?client_id=${GITHUB_CLIENT_ID}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=user:email`;
+            window.location.href = githubAuthUrl;
+        }
+        
         // --- 3. Authentication UI Toggles ---
         toggleAuthBtn.addEventListener('click', (e) => {
             e.preventDefault();
@@ -551,6 +694,9 @@
                 if (response.ok && data.success) {
                     localStorage.setItem('userEmail', data.user.email);
                     localStorage.setItem('userRole', data.user.role);
+                    localStorage.setItem('userName', data.user.name);
+                    localStorage.setItem('userTokens', data.user.tokens);
+                    localStorage.setItem('loginTimestamp', new Date().getTime().toString());
                     
                     // Update Profile Modal with new data
                     document.getElementById('profile-name').textContent = data.user.name;
