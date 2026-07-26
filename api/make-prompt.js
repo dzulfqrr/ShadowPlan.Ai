@@ -24,12 +24,9 @@ export default async function handler(req, res) {
 
     const envApiKey = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY || process.env.API_KEY;
     const finalApiKey = customApiKey || envApiKey;
-    const ai = finalApiKey ? new GoogleGenAI({ apiKey: finalApiKey }) : new GoogleGenAI();
     
-    let selectedModel = 'gemini-2.0-flash-exp';
-    if (model === 'Gemini 1.5 Pro') selectedModel = 'gemini-1.5-pro-latest';
-    else if (model === 'Gemini 3.5 Flash') selectedModel = 'gemini-2.0-flash-exp';
-    else if (model) selectedModel = model;
+    let selectedModel = 'gemini-1.5-flash';
+    if (model === 'Gemini 1.5 Pro') selectedModel = 'gemini-1.5-pro';
 
     const promptText = `
 Anda adalah AI Assistant spesialis pembuat prompt untuk Google Stitch (Generative UI Platform).
@@ -48,12 +45,40 @@ Instruksi:
 4. Fokus pada struktur layout, warna spesifik (hex codes), tipografi, dan perilaku komponen. Jangan sertakan penjelasan apapun selain prompt itu sendiri. Prompt harus langsung dimulai dengan instruksi seperti "Build a..." atau "Create a...".
 `;
 
-    const response = await ai.models.generateContent({
-      model: selectedModel,
-      contents: promptText,
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/${selectedModel}:generateContent?key=${finalApiKey}`;
+    
+    const contents = [];
+    if (fileData) {
+      contents.push({
+        parts: [
+          { inlineData: { data: fileData, mimeType: mimeType } },
+          { text: promptText }
+        ]
+      });
+    } else {
+      contents.push({
+        parts: [{ text: promptText }]
+      });
+    }
+
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ contents })
     });
 
-    return res.status(200).json({ text: response.text });
+    const data = await response.json();
+
+    if (!response.ok) {
+      console.error('Gemini API Error:', data);
+      throw new Error(data.error?.message || 'Gagal menghasilkan response dari AI.');
+    }
+
+    const replyText = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+    
+    return res.status(200).json({ text: replyText });
   } catch (error) {
     console.error('Error generating prompt:', error);
     return res.status(500).json({ error: 'Failed to generate prompt', details: error.message });
