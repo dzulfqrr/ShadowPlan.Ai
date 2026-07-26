@@ -271,7 +271,7 @@
                                 <div class="flex gap-4 items-center">
                                     <label class="text-gray-400 hover:text-gray-200 flex items-center gap-1.5 text-xs font-medium transition-colors cursor-pointer">
                                         <i class="fa-solid fa-paperclip"></i> Attach
-                                        <input type="file" id="chat-attach" class="hidden" multiple accept="*/*" onchange="const files = this.files; if(files.length > 0) { document.getElementById('chat-attach-status').innerHTML = '<i class=\'fa-solid fa-check\'></i> ' + files.length + ' file(s)'; document.getElementById('chat-attach-status').classList.remove('hidden'); }">
+                                        <input type="file" id="chat-attach" class="hidden" multiple accept="*/*" onchange="const files = this.files; if(files.length > 0) { document.getElementById('chat-attach-status').innerHTML = `<i class='fa-solid fa-check'></i> ` + files.length + ` file(s)`; document.getElementById('chat-attach-status').classList.remove('hidden'); }">
                                     </label>
                                     <span id="chat-attach-status" class="text-emerald-400 text-xs hidden items-center gap-1"></span>
                                 </div>
@@ -804,7 +804,7 @@
         });
         
         // --- 7. AI Logic & Output Handling ---
-        let currentModel = 'Gemini 3.5 Flash';
+        let currentModel = 'Gemini 1.5 Flash';
         
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
