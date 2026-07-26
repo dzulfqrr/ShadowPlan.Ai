@@ -353,7 +353,7 @@
                                             <i class="fa-solid fa-cloud-arrow-up text-gray-500 text-lg mb-2" id="prd-upload-icon"></i>
                                             <p class="text-[11px] text-gray-400"><span class="font-medium text-gray-300">Upload File</span> (IMG/PDF)</p>
                                         </div>
-                                        <input type="file" id="prd-file" class="hidden" onchange="const file = this.files[0]; if(file){ document.getElementById('prd-file-name').textContent = file.name; document.getElementById('prd-file-name').classList.remove('hidden'); document.getElementById('prd-upload-icon').className = 'fa-solid fa-file-circle-check text-emerald-400 text-2xl mb-2'; document.getElementById('prd-upload-label').classList.add('border-emerald-500/50', 'bg-emerald-900/10'); } else { document.getElementById('prd-file-name').classList.add('hidden'); document.getElementById('prd-upload-icon').className = 'fa-solid fa-cloud-arrow-up text-gray-500 text-lg mb-2'; document.getElementById('prd-upload-label').classList.remove('border-emerald-500/50', 'bg-emerald-900/10'); }" />
+                                        <input type="file" id="prd-file" class="hidden" onchange="const prdFile = this.files[0]; if(prdFile){ document.getElementById('prd-file-name').textContent = prdFile.name; document.getElementById('prd-file-name').classList.remove('hidden'); document.getElementById('prd-upload-icon').className = 'fa-solid fa-file-circle-check text-emerald-400 text-2xl mb-2'; document.getElementById('prd-upload-label').classList.add('border-emerald-500/50', 'bg-emerald-900/10'); } else { document.getElementById('prd-file-name').classList.add('hidden'); document.getElementById('prd-upload-icon').className = 'fa-solid fa-cloud-arrow-up text-gray-500 text-lg mb-2'; document.getElementById('prd-upload-label').classList.remove('border-emerald-500/50', 'bg-emerald-900/10'); }" />
                                     </label>
                                     <div id="prd-file-name" class="text-xs text-emerald-400 mt-2 hidden text-center w-full truncate px-2 font-medium"></div>
                                 </div>
@@ -406,7 +406,7 @@
                                             <p class="mb-1 text-xs font-medium text-gray-300">Upload Gambar UI</p>
                                         </div>
                                         <img id="design-image-preview" class="absolute inset-0 w-full h-full object-contain hidden pointer-events-none" />
-                                        <input type="file" id="design-file" class="hidden" accept="image/*" onchange="const file = this.files[0]; if(file) { document.getElementById('design-file-name').textContent = file.name; document.getElementById('design-file-name').classList.remove('hidden'); document.getElementById('design-upload-placeholder').classList.add('hidden'); const img = document.getElementById('design-image-preview'); img.src = URL.createObjectURL(file); img.classList.remove('hidden'); } else { document.getElementById('design-file-name').classList.add('hidden'); document.getElementById('design-upload-placeholder').classList.remove('hidden'); document.getElementById('design-image-preview').classList.add('hidden'); }" />
+                                        <input type="file" id="design-file" class="hidden" accept="image/*" onchange="const designFile = this.files[0]; if(designFile) { document.getElementById('design-file-name').textContent = designFile.name; document.getElementById('design-file-name').classList.remove('hidden'); document.getElementById('design-upload-placeholder').classList.add('hidden'); const img = document.getElementById('design-image-preview'); img.src = URL.createObjectURL(designFile); img.classList.remove('hidden'); } else { document.getElementById('design-file-name').classList.add('hidden'); document.getElementById('design-upload-placeholder').classList.remove('hidden'); document.getElementById('design-image-preview').classList.add('hidden'); }" />
                                     </label>
                                     <div id="design-file-name" class="text-xs text-blue-400 mt-2 hidden text-center w-full truncate px-2"></div>
                                 </div>
@@ -532,9 +532,6 @@
             }
         }
         
-        // Run check on page load
-        checkAutoLogin();
-        
         // --- 2.5b Check Social Login Redirect (from Github Callback) ---
         function checkSocialLoginRedirect() {
             const urlParams = new URLSearchParams(window.location.search);
@@ -559,7 +556,12 @@
                 }
             }
         }
-        checkSocialLoginRedirect();
+
+        // Run check on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            checkAutoLogin();
+            checkSocialLoginRedirect();
+        });
         
         // --- 2.6 Password Eye Toggle ---
         function togglePasswordVisibility() {
