@@ -27,9 +27,9 @@ export default async function handler(req, res) {
     const finalApiKey = customApiKey || envApiKey;
     const ai = finalApiKey ? new GoogleGenAI({ apiKey: finalApiKey }) : new GoogleGenAI();
     
-    let selectedModel = 'gemini-1.5-flash';
-    if (model === 'Gemini 1.5 Pro') selectedModel = 'gemini-1.5-pro';
-    else if (model === 'Gemini 3.5 Flash') selectedModel = 'gemini-1.5-flash';
+    let selectedModel = 'gemini-2.0-flash-exp';
+    if (model === 'Gemini 1.5 Pro') selectedModel = 'gemini-1.5-pro-latest';
+    else if (model === 'Gemini 3.5 Flash') selectedModel = 'gemini-2.0-flash-exp';
     else if (model) selectedModel = model;
 
     const promptText = `
