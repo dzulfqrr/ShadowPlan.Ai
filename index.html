@@ -201,15 +201,15 @@
                         <!-- Dropdown Model AI Selection -->
                     <div id="model-dropdown-btn" onclick="toggleModelDropdown()" class="flex items-center gap-2 bg-[#18181b] px-4 py-2 rounded-xl border border-white/5 cursor-pointer hover:bg-[#27272a] transition-all relative">
                         <i class="fa-solid fa-sparkles text-emerald-400 text-xs"></i>
-                        <span id="selected-model-text" class="text-sm font-medium text-gray-200">Gemini 1.5 Flash</span>
+                        <span id="selected-model-text" class="text-sm font-medium text-gray-200">Gemini 3.5 Flash</span>
                         <i class="fa-solid fa-chevron-down text-[10px] text-gray-400 ml-1"></i>
                         
                         <!-- Dropdown Menu -->
                         <div id="model-dropdown-menu" class="absolute top-full left-0 mt-2 w-48 bg-[#18181b] border border-white/10 rounded-xl shadow-2xl opacity-0 invisible transition-all duration-200 z-50 overflow-hidden">
-                            <div onclick="selectModel('Gemini 1.5 Flash'); event.stopPropagation();" class="px-4 py-3 bg-white/5 cursor-pointer text-sm text-emerald-400 flex items-center justify-between border-b border-white/5 model-option" data-model="Gemini 1.5 Flash">
+                            <div onclick="selectModel('Gemini 3.5 Flash'); event.stopPropagation();" class="px-4 py-3 bg-white/5 cursor-pointer text-sm text-emerald-400 flex items-center justify-between border-b border-white/5 model-option" data-model="Gemini 3.5 Flash">
                                 <div class="flex items-center gap-2">
                                     <i class="fa-solid fa-bolt text-emerald-400"></i>
-                                    <span>Gemini 1.5 Flash</span>
+                                    <span>Gemini 3.5 Flash</span>
                                 </div>
                                 <i class="fa-solid fa-check text-xs check-icon"></i>
                             </div>
@@ -806,7 +806,7 @@
         });
         
         // --- 7. AI Logic & Output Handling ---
-        let currentModel = 'Gemini 1.5 Flash';
+        let currentModel = 'Gemini 3.5 Flash';
         
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');

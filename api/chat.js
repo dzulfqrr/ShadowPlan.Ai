@@ -22,12 +22,13 @@ export default async function handler(req, res) {
         await deductToken(email);
     }
 
-    // Initialize Gemini SDK
-    const ai = customApiKey ? new GoogleGenAI({ apiKey: customApiKey }) : new GoogleGenAI();
+    const envApiKey = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY || process.env.API_KEY;
+    const finalApiKey = customApiKey || envApiKey;
+    const ai = finalApiKey ? new GoogleGenAI({ apiKey: finalApiKey }) : new GoogleGenAI();
     
     let selectedModel = 'gemini-1.5-flash';
     if (model === 'Gemini 1.5 Pro') selectedModel = 'gemini-1.5-pro';
-    else if (model && model !== 'Gemini 1.5 Flash') selectedModel = model;
+    else if (model && model !== 'Gemini 1.5 Flash' && model !== 'Gemini 3.5 Flash') selectedModel = model;
 
     const promptText = `
 Anda adalah ShadowPlan AI, asisten AI canggih yang dibuat oleh Blackone.ai Group.
